@@ -1,0 +1,124 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{ae}
+\usepackage[brazil]{babel}
+\usepackage[vmargin=2cm,hmargin=2cm,columnsep=0.75cm]{geometry}
+\usepackage{float,nonfloat}
+
+
+\makeatletter
+\let\@institution\empty
+\def\institution#1{\def\@institution{#1}}
+\renewcommand{\maketitle}{
+\begin{center}
+  {\Large\bfseries\@title\par\medskip}
+  {\large
+   \begin{tabular}[t]{c}%
+     \@author
+   \end{tabular}\par\medskip}
+  {\itshape\@institution\par}
+  {\itshape\@date\par}
+\end{center}}
+\makeatother
+
+\begin{document}
+% ============================================================================
+
+\title{MC920: Introdução ao Processamento de Imagem Digital\\Tarefa 1}
+\author{
+  \begin{minipage}{6cm}
+  \centering
+   Martin Ichilevici de Oliveira\\
+   RA 118077
+  \end{minipage}
+   \and
+  \begin{minipage}{6cm}
+   \centering
+   Rafael Almeida Erthal Hermano\\
+   RA 121286
+  \end{minipage}
+  }
+\institution{Instituto de Computação, Universidade Estadual de Campinas}
+\date{\today}
+
+\maketitle
+
+% ============================================================================
+
+Imagens de rastreio, normalmente são implementadas como matrizes de cores. Uma imagem é uma função bidimensional $f(x,y)$, na qual $x$ e $y$ são coordenadas espaciais e a amplitude de $f$ em um dado ponto é a intensidade ou nivel de cinza. Quando as coordenadas $x$ e $y$ e a amplitude de $f$ são finitas e discretas, a imagem é uma imagem digital. Portanto, uma imagem digital pode ser definida como
+
+\[ F:A^2\rightarrow A | A \subset N \]
+
+O problema desta definição é que apenas imagens preto e branco estão contidas. Para imagens coloridas, uma alternativa seria uma função.
+
+\[ F:A^2\rightarrow A^3 | A \subset N \]
+
+Já as imagens vetoriais, são compostas de elementos paramétricos(curvas, elipses, polígonos, texto, etc...) utilizados para sua descrição.
+
+A função de imagem pode ser caracterizada por duas componentes, iluminância e reflectância, que podem ser descritas como:
+
+\begin{description}
+ \item[Iluminância] A quantidade de iluminação incidente na cena.
+ \item[Reflectância] A quantidade de luz refletida pelos objetos da cena.
+\end{description}
+
+Portanto, podemos reescrever a função que descreve a imagem como o produto destas duas propriedades:
+
+\[ f(x,y) = i(x,y) r(x,y) \]
+
+Em que
+
+\[ 0 < i(x,y) < \infty \]
+\[ 0 < r(x,y) < 1 \]
+
+Podemos notar que $r(x,y)$ é a proporção de luz refletida por incidente, portanto, se $r(x,y) = 0$, o objeto absorve toda a luz e se $r(x,y) = 1$ o objeto reflete toda a luz. Para alguns casos, é utilizada a transmissividade ao invés de reflectância quando utilizamos objetos translúcidos (tais como em imagens de Raios X). O modelo matemático, contudo, permanece o mesmo.
+
+O processamento de uma imagem digital pode envolver diversar etapas. As principais delas são (nem todas estão sempre presentes)\cite{livro}:
+
+\begin{enumerate}
+ \item Aquisição de imagens: é o processo de transformção da imagem real no espaço continuo para uma representação discreta digitalizada. É uma função do tipo:
+
+\[ A:(F:R^2\rightarrow R) \rightarrow  (F:A^2\rightarrow A^3 | A \subset N) \]
+
+\item Filtragem e realce de imagens: consiste na manipulação da imagem original para que se torne mais adequada para a aplicação em questão. As técnicas utilizadas podem variar bastante dependendo de sua destinação (imagens de Raios X sofrerão processos diferentes de imagens de satélites, por exemplo). Os resultados desta etapa são subjetivos e a decisão final fica a cargo do usuário.
+
+\item Restauração de imagens: também consiste na manipulação para melhorar a imagem, contudo, esta etapa é objetiva, ou seja, esta etapa é baseada em modelos matemáticos para remoção de ruidos ou degradação.
+
+\item Processamento de cores: consiste no tratamento das cores da imagem. Esta técnica pode ser segmentada em dois tipos de técnicas distintas, \textit{full-color} e \textit{pseudo-color}. \textit{Full-color} estuda as imagens coloridas oriundas de cameras fotográficas, scanners, etc. \textit{Pseudo-color}, consiste em atribuir a uma cor uma intensidade em uma escala monocromática.
+
+\item \textit{Wavelets} e processamento multiresolução: consiste em representar a imagem em multiplas resoluções, com a finalidade de compressão ou para representação piramidal, na qual a imagem é subdividida em regiões menores.
+
+\item Compressão: consiste em reduzir o espaço necessário para armazenar a imagem e a banda para transmiti-la.
+
+\item Processamento morfológico: consiste na extração de componentes da imagem que são úteis para representação e descrição de formatos.
+
+\item Segmentação: consiste na divisão da imagem em objetos, por exemplo para detecção de objetos na imagem.
+
+\item Representação e descrição: consiste na extração de bordas, cantos, texturas ou estruturas.
+
+\item Reconhecimento de objetos: consiste na associação de um objeto com um descritor.
+\end{enumerate}
+
+Uma aplicação do processamento de imagens digitais é a captura, análise e identificação de impressões digitais. Algumas das etapas citadas anteriormente podem ser, para esta aplicação, exemplificadas nas operações a seguir:
+
+\begin{enumerate}
+ \item Aquisição de imagens: consiste na captura da imagem do mundo real e sua conversão para o mundo digital. Há duas maneiras básicas de ser realizada: ótica ou por capacitância\cite{howstuffworks}. A primeira capta a reflexão da luz nas ranhuras do dedo, enquanto o segundo mede a capacitância ao longo do dedo - devido às diferenças de altura por causa das ranhuras, diferentes capacitâncias são observadas.
+
+ \item Filtragem e realce de imagens: o operador da máquina, ao observar a saída em uma tela (quando disponível), verifica visualmente se a captura está adequada. Isto pode ocasionar no reposicionamento dos dedos, caso necessário, para ajustar a qualidade da imagem.
+
+ \item Restauração de imagens: garantem que o nível médio de preto e a nitidez da imagem estão adequados, ajustando-os caso necessário.
+
+ \item Processamento de cores: imagens coloridas ou em tons de cinza são binarizadas, para que seus \textit{pixels} sejam apenas brancos ou pretos.
+ \setcounter{enumi}{8}
+
+ \item Processamento morfológico: procedimentos de detecção de bordas são aplicados, tais como o filtro de Gabor \cite{fingerprint}. A isto se segue o afinamento das bordas, o qual facilita um outro processamento morfológico: a identificação dos pontos onde as ranhuras dos dedos se iniciam ou bifurcam. Estes pontos, denominados em inglês de \textit{minutiae}, são os elementos utilizados para a detecção de impressões digitais.
+\end{enumerate}
+
+
+\begin{thebibliography}{99}
+  \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
+  \bibitem{fingerprint} \texttt{http://www.reactivated.net/weblog/archives/2006/08/fingerprint-enhancement-and-recognition/}
+  \bibitem{howstuffworks} \texttt{http://computer.howstuffworks.com/fingerprint-scanner2.htm}
+\end{thebibliography}
+
+\end{document}
