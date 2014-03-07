@@ -61,6 +61,30 @@ Portanto, pode ser expresso matematicamente:
 
 Em que $a = \frac{m-1}{2}$ e $b = \frac{n-1}{2}$, onde $m$ e $n$ são o tamanho da janela da vizinhança, e $w(s,t)$ é uma função que determina o peso do vizinho.
 
+\subsection{Propriedades}
+A convolução é uma operação linear já que ela respeita a aditividade e a homogeneidade
+
+\subsubsection{Aditividade}
+\begin{center}
+$\begin{aligned}
+    g(f+h) = &\sum_{s = -a}^{a}\sum_{t = -b}^{b}w(s,t) (f(x - s, y - t) + h(x - s, y - t)) \\
+    g(f+h) = &\sum_{s = -a}^{a}\sum_{t = -b}^{b}w(s,t) f(x - s, y - t) + w(s,t) h(x - s, y - t)\\
+    g(f+h) = &\sum_{s = -a}^{a}\sum_{t = -b}^{b}w(s,t) f(x - s, y - t) + \sum_{s = -a}^{a}\sum_{t = -b}^{b}w(s,t) h(x - s, y - t) \\
+    g(f+h) = &g(f) + g(h)
+\end{aligned}$
+\end{center}
+
+\subsubsection{Homogeneidade}
+\begin{center}
+$\begin{aligned}
+    g(a f) = &\sum_{s = -a}^{a}\sum_{t = -b}^{b}w(s,t) a f(x - s, y - t) \\
+    g(a f) = &a \sum_{s = -a}^{a}\sum_{t = -b}^{b}w(s,t) f(x - s, y - t) \\
+    g(a f) = &a g(f)
+\end{aligned}$
+\end{center}
+
+\newpage
+
 \subsection{Aplicações}
 \subsubsection{Blur}
 O blur é utilizado para eliminar ruidos, removendo pequenos detalhes da imagem. O blur consiste em substituir cada pixel da imagem pela média dos vizinhos eliminando transições bruscas. Um possível problema na utilização do blur é a perda de definição nas bordas dificultando a identificação dos contornos.
