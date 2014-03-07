@@ -55,7 +55,7 @@ Convolução é uma operação de vizinhança linear, ou seja, ela é uma funç�
 Portanto, pode ser expresso matematicamente:
 
 \begin{equation}
-    g(x,y) = \sum_{s = -a}^{a}\sum_{t = -b}^{b}w(s,t) f(x + x, y + t)
+    g(x,y) = \sum_{s = -a}^{a}\sum_{t = -b}^{b}w(s,t) f(x - s, y - t)
     \label{eq:conv_eq}
 \end{equation}
 
@@ -66,7 +66,7 @@ Em que $a = \frac{m-1}{2}$ e $b = \frac{n-1}{2}$, onde $m$ e $n$ são o tamanho 
 O blur é utilizado para eliminar ruidos, removendo pequenos detalhes da imagem. O blur consiste em substituir cada pixel da imagem pela média dos vizinhos eliminando transições bruscas. Um possível problema na utilização do blur é a perda de definição nas bordas dificultando a identificação dos contornos.
 
 \subsubsection*{Standard Average Blur}
-Consiste em aplicar para todos os vizinhos o mesmo peso da equação \ref{eq:conv_eq} temos que $w(s,t) = \frac{1}{n * m} \forall s,t$. Para uma vizinhança 3x3 temos que a máscara é:
+Consiste em aplicar para todos os vizinhos o mesmo peso. Da equação \ref{eq:conv_eq} temos que $w(s,t) = \frac{1}{n * m} \forall s,t$. Para uma vizinhança 3x3 temos que a máscara é:
 
 \[ w(s,t) = \frac{1}{9} \cdot \left|
 \begin{array}{ccc}
