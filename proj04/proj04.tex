@@ -1,0 +1,99 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{ae}
+\usepackage[brazil]{babel}
+\usepackage[vmargin=2cm,hmargin=2cm,columnsep=0.75cm]{geometry}
+\usepackage{float,nonfloat}
+\usepackage{graphicx,color}
+\usepackage{subcaption}
+\usepackage{amsmath}
+
+\makeatletter
+\let\@institution\empty
+\def\institution#1{\def\@institution{#1}}
+\renewcommand{\maketitle}{
+    \begin{center}
+        {\Large\bfseries\@title\par\medskip}
+        {\large
+            \begin{tabular}[t]{c}%
+                \@author
+        \end{tabular}\par\medskip}
+        {\itshape\@institution\par}
+        {\itshape\@date\par}
+\end{center}}
+\makeatother
+
+\newcommand{\pixel}{\textit{pixel} }
+\newcommand{\pixels}{\textit{pixels} }
+
+\begin{document}
+% ============================================================================
+
+\title{MC920: Introdução ao Processamento de Imagem Digital\\Tarefa 4}
+\author{
+    \begin{minipage}{6cm}
+        \centering
+        Martin Ichilevici de Oliveira\\
+        RA 118077
+    \end{minipage}
+    \and
+    \begin{minipage}{6cm}
+        \centering
+        Rafael Almeida Erthal Hermano\\
+        RA 121286
+    \end{minipage}
+}
+\institution{Instituto de Computação, Universidade Estadual de Campinas}
+\date{\today}
+
+\maketitle
+
+% ============================================================================
+
+\section{Convolução}
+Convolução é uma operação de vizinhança linear, ou seja, ela é uma função que transforma um pixel de acordo com o somatório ponderado dos vizinhos.
+Portanto, pode ser expresso matematicamente:
+
+\begin{equation}
+    g(x,y) = \sum_{s = -a}^{a}\sum_{t = -b}^{b}w(s,t) f(x + x, y + t)
+    \label{eq:conv_eq}
+\end{equation}
+
+Em que $a = \frac{m-1}{2}$ e $b = \frac{n-1}{2}$, onde $m$ e $n$ são o tamanho da janela da vizinhança, e $w(s,t)$ é uma função que determina o peso do vizinho.
+
+\subsection{Aplicações}
+\subsubsection{Blur}
+O blur é utilizado para eliminar ruidos, removendo pequenos detalhes da imagem. O blur consiste em substituir cada pixel da imagem pela média dos vizinhos eliminando transições bruscas. Um possível problema na utilização do blur é a perda de definição nas bordas dificultando a identificação dos contornos.
+
+\subsubsection*{Standard Average Blur}
+Consiste em aplicar para todos os vizinhos o mesmo peso da equação \ref{eq:conv_eq} temos que $w(s,t) = \frac{1}{n * m} \forall s,t$. Para uma vizinhança 3x3 temos que a máscara é:
+
+\[ w(s,t) = \frac{1}{9} \cdot \left|
+\begin{array}{ccc}
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+\end{array}\right|\]
+
+\subsubsection*{Weighted Average Blur}
+Consiste em aplicar para os vizinhos 4 conexos um peso maior aos vizinhos 8 conexos. Portanto, para uma vizinhança 3x3 temos que a mascara é:
+
+\[ w(s,t) = \frac{1}{16} \cdot \left|
+\begin{array}{ccc}
+1 & 2 & 1 \\
+2 & 4 & 2 \\
+1 & 2 & 1 \\
+\end{array}\right|\]
+
+\section{Limiarização}
+Consiste em escurecer os pixels que possuem nível de cinza abaixo de M e clarear imagens com nível de cinza acima de M. O resultado final desta operação é uma imagem binária.
+\begin{align*}
+    T[f(x,y)] &= 0 \text{ se } f(x,y) < M \\
+              &= 1 \text{ se } f(x,y) > M
+\end{align*}
+
+\begin{thebibliography}{99}
+    \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
+\end{thebibliography}
+
+\end{document}
