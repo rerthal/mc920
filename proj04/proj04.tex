@@ -83,14 +83,12 @@ A convolução é uma operação linear já que ela respeita a aditividade e a h
     \end{aligned}$
 \end{center}
 
-\newpage
-
 \subsection{Aplicações}
 \subsubsection{Blur}
 O blur é utilizado para eliminar ruidos, removendo pequenos detalhes da imagem. O blur consiste em substituir cada pixel da imagem pela média dos vizinhos eliminando transições bruscas. Um possível problema na utilização do blur é a perda de definição nas bordas dificultando a identificação dos contornos.
 
 \subsubsection*{Standard Average Blur}
-Consiste em aplicar para todos os vizinhos o mesmo peso. Da equação \ref{eq:conv_eq} temos que $w(s,t) = \frac{1}{n * m} \forall s,t$. Para uma vizinhança 3x3 temos que a máscara é:
+Consiste em aplicar para todos os vizinhos o mesmo peso. Da equação \ref{eq:conv_eq} temos que $w(s,t) = \frac{1}{n \cdot m} \forall s,t$. Para uma vizinhança 3x3 temos que a máscara é:
 
 \[ w(s,t) = \frac{1}{9} \cdot \left|
     \begin{array}{ccc}
@@ -186,11 +184,33 @@ Aplicou-se então a convolução com as matrizes acima referidas à Figura \ref{
     \caption{Imagem original e em tons de cinza antes e após convolução}
 \end{figure}
 \section{Limiarização}
-Consiste em escurecer os pixels que possuem nível de cinza abaixo de M e clarear imagens com nível de cinza acima de M. O resultado final desta operação é uma imagem binária.
+Consiste em escurecer os pixels que possuem nível de cinza abaixo de M e clarear imagens com nível de cinza acima de M. O resultado final desta operação é uma imagem binária. Aplicou-se o procedimento à Figura \ref{fig:original2} (convertida para tons de cinza na Figura \ref{fig:src_thr}), e o resultado pode ser observado em \ref{fig:dst_thr}.
 \begin{align*}
     T[f(x,y)] &= 0 \text{ se } f(x,y) < M \\
               &= 1 \text{ se } f(x,y) > M
 \end{align*}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{original2.jpg}
+        \caption{Figura original}
+        \label{fig:original2}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{src_thr.jpg}
+        \caption{Convertida para tons de cinza}
+        \label{fig:src_thr}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{dst_thr.jpg}
+        \caption{Após limiarização}
+        \label{fig:dst_thr}
+    \end{subfigure}
+    \caption{Imagem original e em tons de cinza antes e após limiarização}
+\end{figure}
 
 \begin{thebibliography}{99}
     \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
