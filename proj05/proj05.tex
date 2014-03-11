@@ -1,0 +1,140 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{ae}
+\usepackage[brazil]{babel}
+\usepackage[vmargin=2cm,hmargin=2cm,columnsep=0.75cm]{geometry}
+\usepackage{float,nonfloat}
+\usepackage{graphicx,color}
+\usepackage{subcaption}
+\usepackage{amsmath}
+
+\makeatletter
+\let\@institution\empty
+\def\institution#1{\def\@institution{#1}}
+\renewcommand{\maketitle}{
+    \begin{center}
+        {\Large\bfseries\@title\par\medskip}
+        {\large
+            \begin{tabular}[t]{c}%
+                \@author
+        \end{tabular}\par\medskip}
+        {\itshape\@institution\par}
+        {\itshape\@date\par}
+\end{center}}
+\makeatother
+
+\newcommand{\pixel}{\textit{pixel} }
+\newcommand{\pixels}{\textit{pixels} }
+
+\begin{document}
+% ============================================================================
+
+\title{MC920: Introdução ao Processamento de Imagem Digital\\Tarefa 5}
+\author{
+    \begin{minipage}{6cm}
+        \centering
+        Martin Ichilevici de Oliveira\\
+        RA 118077
+    \end{minipage}
+    \and
+    \begin{minipage}{6cm}
+        \centering
+        Rafael Almeida Erthal Hermano\\
+        RA 121286
+    \end{minipage}
+}
+\institution{Instituto de Computação, Universidade Estadual de Campinas}
+\date{\today}
+
+\maketitle
+
+% ============================================================================
+
+\section{Ruído}
+\subsection{Bipolar}
+A função de distribuição de probabilidade de um ruído bipolar é dada por:
+
+\begin{equation}
+p(z) = \left\{
+    \begin{array}{l}
+        P_a \text{ se } z = a \\
+        P_b \text{ se } z = b \\
+        0 \text{ caso contrário}
+    \end{array}\right.
+\end{equation}
+
+Onde $P_a$ é o clareamento do pixel e $P_b$ é o escurecimento de um pixel.
+
+\subsubsection{Salt and pepper}
+Se $P_a$ e $P_b$ forem similares, temos um ruído salt and pepper.
+
+\subsubsection{Unipolar}
+Se $P_a \cdot P_b = 0$ temos um ruído unipolar ja que apenas uma das faixas será modificada.
+
+\subsection{Erlang}
+A função de ditribuição de probabilidade Erlang foi originalmente desenvolvida para modelar trafego de ligações telefonicas.
+
+\begin{equation}
+p(z) = \left\{
+    \begin{array}{l}
+        \frac{a^{b}\cdot z^{b-1}}{(b - 1)!} \cdot e^{-a z} \text{ se } z \ge 0 \\
+        0 \text{ se } z < 0
+    \end{array}\right.
+\end{equation}
+
+Onde $b$ é a forma e $a$ é a taxa de crescimento.
+
+\subsubsection{Exponencial}
+Se $b = 1$ temos um ruido exponencial
+
+\begin{equation}
+p(z) = \left\{
+    \begin{array}{l}
+        a \cdot e^{-a z} \text{ se } z \ge 0 \\
+        0 \text{ se } z < 0
+    \end{array}\right.
+\end{equation}
+
+\subsection{Rayleigh}
+Como o função de distribuição de probabilidade de Rayleigh possui uma assimetria entre os lados direito e esquerdo, ela pode ser utilizado para aproximar histogramas assimétricos.
+
+\begin{equation}
+p(z) = \left\{
+    \begin{array}{l}
+        \frac{1}{b} \cdot (z - a) \cdot e^{\frac{-(z-a)^2}{b}} \text{ se } z \ge 0 \\
+        0 \text{ se } z < 0
+    \end{array}\right.
+\end{equation}
+
+\subsection{Uniforme}
+A função distribuição de probabilidade uniforme eleva os níveis de cinza na faixa de $a$ até $b$
+
+\begin{equation}
+p(z) = \left\{
+    \begin{array}{l}
+        \frac{1}{b - a} \text{ se } a \le z \le b \\
+        0 \text{ se } z < 0
+    \end{array}\right.
+\end{equation}
+
+\subsection{Branco}
+Martin
+
+\subsection{Gaussiano}
+Carioca
+
+\section{Filtro da média}
+Martin
+
+\section{Filtro Gaussiano}
+Carioca
+
+\section{Mediana}
+Martin
+
+\begin{thebibliography}{99}
+    \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
+    \bibitem{white_noise} http\:\/\/en.wikipedia.org\/wiki\/White\_noise
+\end{thebibliography}
+
+\end{document}
