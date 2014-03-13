@@ -66,7 +66,23 @@ p(z) = \left\{
 Onde $P_a$ é o clareamento do \pixel e $P_b$ é o escurecimento de um \pixel.
 
 \subsubsection{\textit{Salt and pepper}}
-Se $P_a$ e $P_b$ forem similares, temos um ruído \textit{salt and pepper}, o qual caracteriza-se pela presença de pontos brancos e pretos espalhados pela imagem, de forma aparentemente aleatória.
+Se $P_a$ e $P_b$ forem similares, temos um ruído \textit{salt and pepper}, o qual caracteriza-se pela presença de pontos brancos e pretos espalhados pela imagem, de forma aparentemente aleatória. Aplicou-se este ruído à Figura \ref{fig:src} de forma artificial, produzindo o a Figura \ref{fig:salt_and_pepper}. Ao longo deste trabalho, alguns filtros foram aplicados a fim de verificar seu efeito para o tratamento deste tipo de ruído.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{src.jpg}
+        \caption{Figura original}
+        \label{fig:src}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{dst_sp.jpg}
+        \caption{Com ruído \textit{salt and pepper}}
+        \label{fig:salt_and_pepper}
+    \end{subfigure}
+    \caption{Imagem original e com filtro \textit{salt and pepper}}
+\end{figure}
 
 \subsubsection{Unipolar}
 Se $P_a \cdot P_b = 0$ temos um ruído unipolar ja que apenas uma das faixas será modificada. Ou seja, apenas \pixels brancos ou pretos irão aparecer devido a neste tipo de ruído.
@@ -127,7 +143,7 @@ Carioca
 Filtros de suavização são utilizados para enevoamento (\textit{blur}) e remoção de ruído. Estes filtros podem ser lineares ou não lineares. Dentre os lineares, destacam-se o filtro da média e o filtro gaussiano. Dentre os não-lineares, destaca-se o filtro da mediana.
 
 \subsection{Filtro da média}
-O filtro da média consiste em definir uma vizinhança e atribuir ao \pixel central a intensidade média dos \pixels desta vizinhança. A média pode tanto ser simples, em que cada \pixel tem o mesmo peso, como ponderada. Por exemplo, consideremos uma vizinhança $3\times3$. Para a média simples, temos que a máscara vale:
+O filtro da média consiste em definir uma vizinhança e atribuir ao \pixel central a intensidade média dos \pixels desta vizinhança. A média pode tanto ser aritmética, em que cada \pixel tem o mesmo peso, como ponderada. Por exemplo, consideremos uma vizinhança $3\times3$. Para a média aritmética, temos que a máscara vale:
 
 \[ w(s,t) = \frac{1}{9} \cdot \left|
     \begin{array}{ccc}
@@ -145,6 +161,24 @@ Uma implementação possível para a máscara da média ponderada, para a mesma 
         1 & 2 & 1 \\
 \end{array}\right|\]
 
+Aplicou-se o filtro da média aritmética à Figura \ref{fig:src}, produzindo as imagens exibidas na Figura \ref{fig:avg_filter3} e \ref{fig:avg_filter5}.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{dst_sp_avg3.jpg}
+        \caption{Janela $3 \times 3$}
+        \label{fig:avg_filter3}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{dst_sp_avg5.jpg}
+        \caption{Janela $5 \times 5$}
+        \label{fig:avg_filter5}
+    \end{subfigure}
+    \caption{Filtro da média (aritmética) aplicado à Figura \ref{fig:salt_and_pepper}.}
+\end{figure}
+
 \section{Filtros de domínio de frequência}
 \subsection{Filtro Gaussiano}
 Carioca
@@ -154,6 +188,15 @@ Filtros estatísticos de ordem são filtros não lineares que ordenam a intensid
 
 \subsection{Mediana}
 Como o próprio nome sugere, o filtro da mediana substitui a intensidade de um \pixel pela intensidade da mediana de uma determinada vizinhança. Se por exemplo temos uma vizinhança $3\times3$, a mediana é o $5^o$ valor. Esta técnica é especialmente útil quando lidamos com ruídos do tipo \textit{salt and pepper}, já que este ruído é caracterizado justamente por possuir \pixels brancos ou pretos em locais inesperados e aleatórios. Assim, este filtro age forçando com que \pixels com intensidades discrepantes assumam valores mais próximos aos de seus vizinhos.
+
+Aplicou-se o filtro da mediana com uma janela $3 \times 3$ à Figura \ref{fig:src}, produzindo as imagens exibidas na Figura \ref{fig:median_filter}. Verificamos que o filtro da mediana foi muito mais eficaz para eliminar os ruídos \textit{salt and pepper} do que o filtro da média, como já era esperado.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.45\textwidth]{dst_sp_median.jpg}
+    \caption{Filtro da mediana aplicado à Figura \ref{fig:salt_and_pepper}}
+    \label{fig:median_filter}
+\end{figure}
 
 \begin{thebibliography}{99}
     \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
