@@ -63,13 +63,13 @@ p(z) = \left\{
     \end{array}\right.
 \end{equation}
 
-Onde $P_a$ é o clareamento do pixel e $P_b$ é o escurecimento de um pixel.
+Onde $P_a$ é o clareamento do \pixel e $P_b$ é o escurecimento de um \pixel.
 
-\subsubsection{Salt and pepper}
-Se $P_a$ e $P_b$ forem similares, temos um ruído salt and pepper.
+\subsubsection{\textit{Salt and pepper}}
+Se $P_a$ e $P_b$ forem similares, temos um ruído \textit{salt and pepper}, o qual caracteriza-se pela presença de pontos brancos e pretos espalhados pela imagem, de forma aparentemente aleatória.
 
 \subsubsection{Unipolar}
-Se $P_a \cdot P_b = 0$ temos um ruído unipolar ja que apenas uma das faixas será modificada.
+Se $P_a \cdot P_b = 0$ temos um ruído unipolar ja que apenas uma das faixas será modificada. Ou seja, apenas \pixels brancos ou pretos irão aparecer devido a neste tipo de ruído.
 
 \subsection{Erlang}
 A função de ditribuição de probabilidade Erlang foi originalmente desenvolvida para modelar trafego de ligações telefonicas.
@@ -80,7 +80,7 @@ p(z) = \left\{
         \frac{a^{b}\cdot z^{b-1}}{(b - 1)!} \cdot e^{-a z} \text{ se } z \ge 0 \\
         0 \text{ se } z < 0
     \end{array}\right.
-\end{equation}
+    \end{equation}
 
 Onde $b$ é a forma e $a$ é a taxa de crescimento.
 
@@ -96,7 +96,7 @@ p(z) = \left\{
 \end{equation}
 
 \subsection{Rayleigh}
-Como o função de distribuição de probabilidade de Rayleigh possui uma assimetria entre os lados direito e esquerdo, ela pode ser utilizado para aproximar histogramas assimétricos.
+Como a função de distribuição de probabilidade de Rayleigh possui uma assimetria entre os lados direito e esquerdo, ela pode ser utilizada para aproximar histogramas assimétricos.
 
 \begin{equation}
 p(z) = \left\{
@@ -118,23 +118,46 @@ p(z) = \left\{
 \end{equation}
 
 \subsection{Branco}
-Martin
+Quando o ruído em um \pixel $i$ é estatisticamente independente do ruído causado em um \pixel $j$, para quaisquer $i,j$, chamamos este ruído de branco. Matematicamente, ele é definido como um um conjunto de ruídos estatisticamente independentes com média zero e variância finita. Assim, sua covariância é zero. Em termos práticos, isto implica que qualquer \pixel da imagem pode receber um ruído de qualquer intensidade, independentemente do ruído recebido (ou não) pelos outros \pixels.
 
 \subsection{Gaussiano}
 Carioca
 
-\section{Filtro da média}
-Martin
+\section{Filtros espaciais de suavização}
+Filtros de suavização são utilizados para enevoamento (\textit{blur}) e remoção de ruído. Estes filtros podem ser lineares ou não lineares. Dentre os lineares, destacam-se o filtro da média e o filtro gaussiano. Dentre os não-lineares, destaca-se o filtro da mediana.
 
-\section{Filtro Gaussiano}
+\subsection{Filtro da média}
+O filtro da média consiste em definir uma vizinhança e atribuir ao \pixel central a intensidade média dos \pixels desta vizinhança. A média pode tanto ser simples, em que cada \pixel tem o mesmo peso, como ponderada. Por exemplo, consideremos uma vizinhança $3\times3$. Para a média simples, temos que a máscara vale:
+
+\[ w(s,t) = \frac{1}{9} \cdot \left|
+    \begin{array}{ccc}
+        1 & 1 & 1 \\
+        1 & 1 & 1 \\
+        1 & 1 & 1 \\
+\end{array}\right|\]
+
+Uma implementação possível para a máscara da média ponderada, para a mesma vizinhança, é dada por:
+
+\[ w(s,t) = \frac{1}{16} \cdot \left|
+    \begin{array}{ccc}
+        1 & 2 & 1 \\
+        2 & 4 & 2 \\
+        1 & 2 & 1 \\
+\end{array}\right|\]
+
+\section{Filtros de domínio de frequência}
+\subsection{Filtro Gaussiano}
 Carioca
 
-\section{Mediana}
-Martin
+\section{Filtros estatísticos de ordem}
+Filtros estatísticos de ordem são filtros não lineares que ordenam a intensidade dos \pixels do setor sendo considerando e estabelecem ao valor central desta área a intensidade do \pixel que esteja na $i$-ésima posição. Dentre estes, o mais comum é o filtro da mediana.
+
+\subsection{Mediana}
+Como o próprio nome sugere, o filtro da mediana substitui a intensidade de um \pixel pela intensidade da mediana de uma determinada vizinhança. Se por exemplo temos uma vizinhança $3\times3$, a mediana é o $5^o$ valor. Esta técnica é especialmente útil quando lidamos com ruídos do tipo \textit{salt and pepper}, já que este ruído é caracterizado justamente por possuir \pixels brancos ou pretos em locais inesperados e aleatórios. Assim, este filtro age forçando com que \pixels com intensidades discrepantes assumam valores mais próximos aos de seus vizinhos.
 
 \begin{thebibliography}{99}
     \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
-    \bibitem{white_noise} http\:\/\/en.wikipedia.org\/wiki\/White\_noise
+    \bibitem{whitenoise} \texttt{http://en.wikipedia.org/wiki/White\_noise}
 \end{thebibliography}
 
 \end{document}
