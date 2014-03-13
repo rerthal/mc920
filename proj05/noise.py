@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import sys
+import math
 
 L = 256
 
@@ -12,6 +13,14 @@ def salt_and_pepper(src, a, b, Pa=0, Pb=255):
                 dst[i][j] = Pa
             elif dst[i][j] == b:
                 dst[i][j] = Pb
+    return dst
+
+def gaussian(src, a, b):
+    dst = np.copy(src)
+    noise = np.random.normal(a, b, dst.shape)
+    for i in range(dst.shape[0]):
+        for j in range(dst.shape[1]):
+            dst[i][j] = dst[i][j] + noise[i][j]
     return dst
 
 def uso():
@@ -29,12 +38,16 @@ if __name__ == '__main__':
         uso()
     src = cv2.cvtColor(src, cv2.cv.CV_BGR2GRAY)
     dst_sp = salt_and_pepper(src, 135, 17)
+    dst_ga = gaussian(src, 2, 10)
     dst_sp_avg_blur3 = cv2.blur(dst_sp, (3, 3))
     dst_sp_avg_blur5 = cv2.blur(dst_sp, (5, 5))
     dst_sp_median_blur = cv2.medianBlur(dst_sp, 3)
+    dst_ga_filter = cv2.GaussianBlur(dst_ga, ksize=(3,3), sigma1=135)
     cv2.imwrite('src.jpg', src)
     cv2.imwrite('dst_sp.jpg', dst_sp)
+    cv2.imwrite('dst_ga.jpg', dst_ga)
     cv2.imwrite('dst_sp_avg3.jpg', dst_sp_avg_blur3)
     cv2.imwrite('dst_sp_avg5.jpg', dst_sp_avg_blur5)
     cv2.imwrite('dst_sp_median.jpg', dst_sp_median_blur)
+    cv2.imwrite('dst_ga_filter.jpg', dst_ga_filter)
 

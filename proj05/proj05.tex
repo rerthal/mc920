@@ -137,7 +137,24 @@ p(z) = \left\{
 Quando o ruído em um \pixel $i$ é estatisticamente independente do ruído causado em um \pixel $j$, para quaisquer $i,j$, chamamos este ruído de branco. Matematicamente, ele é definido como um um conjunto de ruídos estatisticamente independentes com média zero e variância finita. Assim, sua covariância é zero. Em termos práticos, isto implica que qualquer \pixel da imagem pode receber um ruído de qualquer intensidade, independentemente do ruído recebido (ou não) pelos outros \pixels.
 
 \subsection{Gaussiano}
-Carioca
+O ruído gaussiano normalmente ocorre na aquisição da imagem e pode ser causado por baixa iluminação, altas temperaturas ou transmissão.
+
+\begin{equation}
+p(z) = \left\{
+    \begin{array}{l}
+        \frac{1}{\sigma \sqrt{2 \pi}} \cdot e^{-\frac{z - \mu}{2 \sigma^{2}}} \text{ se } a \ge 0 \\
+        0 \text{ se } z < 0
+    \end{array}\right.
+\end{equation}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{dst_ga.jpg}
+        \label{fig:gauss}
+    \end{subfigure}
+    \caption{Imagem com ruído \textit{gaussiano}}
+\end{figure}
 
 \section{Filtros espaciais de suavização}
 Filtros de suavização são utilizados para enevoamento (\textit{blur}) e remoção de ruído. Estes filtros podem ser lineares ou não lineares. Dentre os lineares, destacam-se o filtro da média e o filtro gaussiano. Dentre os não-lineares, destaca-se o filtro da mediana.
@@ -179,9 +196,22 @@ Aplicou-se o filtro da média aritmética à Figura \ref{fig:src}, produzindo as
     \caption{Filtro da média (aritmética) aplicado à Figura \ref{fig:salt_and_pepper}.}
 \end{figure}
 
+\newpage
+
 \section{Filtros de domínio de frequência}
 \subsection{Filtro Gaussiano}
-Carioca
+O filtro gaussiano diminui o nível de ruído de uma imagem, diminuindo ascensões e quedas, afim de diminuir a distorção na imagem. O filtro gaussiano é uma convolução que pode ser expressa como:
+
+\begin{equation}
+g(x,y) = \frac{1}{\sigma^{2} 2 \pi} \cdot e^{-\frac{x^2 + y^2}{2 \sigma^{2}}}
+\end{equation}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.45\textwidth]{dst_sp_median.jpg}
+    \caption{Filtro gaussiano aplicado à Figura \ref{fig:gauss}}
+    \label{fig:gauss_filter}
+\end{figure}
 
 \section{Filtros estatísticos de ordem}
 Filtros estatísticos de ordem são filtros não lineares que ordenam a intensidade dos \pixels do setor sendo considerando e estabelecem ao valor central desta área a intensidade do \pixel que esteja na $i$-ésima posição. Dentre estes, o mais comum é o filtro da mediana.
