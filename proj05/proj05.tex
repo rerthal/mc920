@@ -155,7 +155,26 @@ p(z) = \left\{
 \end{figure}
 
 \subsection{Geométrico}
-Ruídos geométricos são deformações na imagem normalmente não provenientes dos sensores ou de funções de distribuição de probabilidade. Ruídos geométricos normalmente são originados por defeitos no objeto da imagem, por exemplo, em impressões digitais, cicatrizes, marcas de envelhecimentos, sujeiras, entre outros, podem ser caracterizados como ruídos geométricos, já que eles podem alterar as minucias da impressão impossibilitando a identificação biométrica.
+Ruídos geométricos são deformações na imagem que normalmente não provenientes dos sensores ou de funções de distribuição de probabilidade. Muitas vezes, o objeto origem (do qual se está obtendo a imagem) possuí imperfeições. No âmbito de impressões digitais, estas podem ser cicatrizes, marcas de envelhecimentos, sujeiras, entre outros. Estas imperfeições podem ser caracterizados como ruídos geométricos uma vez que não deveriam estar presentes na imagem e alteram as minúcias, elemento primoridal na identificação biométrica.
+
+A Figura \ref{fig:geom_noise} mostra um exemplo claro de ruído geométrico (ainda que fora do campo da impressão digital). Podemos ver claramente as faixas verticais na Figura \ref{fig:geom_noise_true}, e sua ausência na Figura \ref{fig:geom_noise_false}.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{geom_noise_true.jpg}
+        \caption{Com ruído geométrico}
+        \label{fig:geom_noise_true}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{geom_noise_false.jpg}
+        \caption{Após eliminação do ruído}
+        \label{fig:geom_noise_false}
+    \end{subfigure}
+  \caption{Exemplo de imagem com ruído geométrico e após filtro de redução aplicado pelo \textit{software} Silkypix\cite{silkypix}}
+    \label{fig:geom_noise}
+\end{figure}
 
 \section{Filtros espaciais de suavização}
 Filtros de suavização são utilizados para enevoamento (\textit{blur}) e remoção de ruído. Estes filtros podem ser lineares ou não lineares. Dentre os lineares, destacam-se o filtro da média e o filtro gaussiano. Dentre os não-lineares, destaca-se o filtro da mediana.
@@ -230,6 +249,7 @@ Aplicou-se o filtro da mediana com uma janela $3 \times 3$ à Figura \ref{fig:sr
 \begin{thebibliography}{99}
     \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
     \bibitem{whitenoise} \texttt{http://en.wikipedia.org/wiki/White\_noise}
+    \bibitem{silkypix} \texttt{http://www.isl.co.jp/SILKYPIX/english/newsletter/051222/}
 \end{thebibliography}
 
 \end{document}
