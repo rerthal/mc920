@@ -1,0 +1,167 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{ae}
+\usepackage[brazil]{babel}
+\usepackage[vmargin=2cm,hmargin=2cm,columnsep=0.75cm]{geometry}
+\usepackage{float,nonfloat}
+\usepackage{graphicx,color}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{verbatim}
+
+\makeatletter
+\let\@institution\empty
+\def\institution#1{\def\@institution{#1}}
+\renewcommand{\maketitle}{
+    \begin{center}
+        {\Large\bfseries\@title\par\medskip}
+        {\large
+            \begin{tabular}[t]{c}%
+                \@author
+        \end{tabular}\par\medskip}
+        {\itshape\@institution\par}
+        {\itshape\@date\par}
+\end{center}}
+\makeatother
+
+\newcommand{\pixel}{\textit{pixel} }
+\newcommand{\pixels}{\textit{pixels} }
+\newcommand{\kernel}{\textit{kernel} }
+\newcommand{\kernels}{\textit{kernels} }
+
+\begin{document}
+% ============================================================================
+
+\title{MC920: Introdução ao Processamento de Imagem Digital\\Tarefa 6}
+\author{
+    \begin{minipage}{6cm}
+        \centering
+        Martin Ichilevici de Oliveira\\
+        RA 118077
+    \end{minipage}
+    \and
+    \begin{minipage}{6cm}
+        \centering
+        Rafael Almeida Erthal Hermano\\
+        RA 121286
+    \end{minipage}
+}
+\institution{Instituto de Computação, Universidade Estadual de Campinas}
+\date{\today}
+
+\maketitle
+
+% ============================================================================
+
+\section{Máscaras de Convolução e Detecção de contorno}
+\section{Gradiente e Laplaciano discretos}
+\section{Convolução e operadores direcionais}
+Uma forma de calcular o gradiente, ainda que de forma, já que uma imagem digital é discrea, é através de \kernels de convolução.
+\subsection{Máscaras direcionais}
+\subsubsection{Sobel}
+O Operador de Sobel é um operador de diferenciação discreto que calcula uma aproximação do gradiente da intensidade em cada ponto. O operador define dois \kernels, um responsáel pelo cálculo no eixo horizontal e outro pelo eixo vertical. Definimi-los:
+
+\begin{equation}
+  G_x =\left[\begin{array}{ccc}
+    -1 & 0 & 1\\
+    -2 & 0 & 2\\
+    -1 & 0 & 1
+  \end{array}\right] \qquad
+  G_y =\left[\begin{array}{ccc}
+    -1 & -2 & 1\\
+     0 & 0 & 0\\
+    1 & 2 & 1
+  \end{array}\right]
+  \label{eq:sobel}
+\end{equation}
+
+Para cada \pixel da imagem, calcula-se a derivada nos dois sentidos, convolucionando a imagem com os \kernels definidos em (\ref{eq:sobel}). O gradiente na imagem pode ser então aproximado combinando o resultado da operação anterior, conforme mostra (\ref{eq:sobel_combine}).
+
+\begin{equation}
+  G = \sqrt{G_x^2 + G_y^2} \qquad \text{ou} \qquad G = \frac{\left|G_x\right|+\left|G_y\right|}{2}
+  \label{eq:sobel_combine}
+\end{equation}
+
+Um exemplo de aplicação do filtro pode ser observado na Figura \ref{fig:sob}.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{src.jpg}
+        \caption{Figura original\cite{bike}}
+        \label{fig:src}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{sobel_x.jpg}
+        \caption{\centering Após aplicação de filtro de Sobel (com \kernel de tamanho 3) no eixo $x$}
+        \label{fig:sobel_x}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{sobel_y.jpg}
+        \caption{\centering Após aplicação de filtro de Sobel (com \kernel de tamanho 3) no eixo $y$}
+        \label{fig:sobel_y}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{sobel.jpg}
+        \caption{\centering Após aplicação de filtro de Sobel (com \kernel de tamanho 3), nos dois eixos}
+        \label{fig:sobel}
+    \end{subfigure}
+    \caption{Imagem original e com filtro de Sobel}
+    \label{fig:sob}
+\end{figure}
+\subsubsection{Prewitt}
+O filtro de Prewitt é semelhante ao de Sobel, no sentindo de também ser formado por duas máscaras de convolução que podem ser utilizadas para detectar bordas. As máscaras são definidas por (\ref{eq:prewitt}).
+
+\begin{equation}
+  G_x =\left[\begin{array}{ccc}
+    -1 & 0 & 1\\
+    -1 & 0 & 1\\
+    -1 & 0 & 1
+  \end{array}\right] \qquad
+  G_y =\left[\begin{array}{ccc}
+    1 & 1 & 1\\
+     0 & 0 & 0\\
+    -1 & -1 & -1
+  \end{array}\right]
+  \label{eq:prewitt}
+\end{equation}
+
+Aplicando-se esta máscara, obtemos bons resultados, como ilustrado na Figura \ref{fig:prew}.
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{src.jpg}
+        \caption{Figura original\cite{bike}}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{prewitt_x.jpg}
+        \caption{\centering Após aplicação de filtro de Prewitt (com \kernel de tamanho 5) no eixo $x$}
+        \label{fig:prewitt_x}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{prewitt_y.jpg}
+        \caption{\centering Após aplicação de filtro de Prewitt (com \kernel de tamanho 5) no eixo $y$}
+        \label{fig:prewitt_y}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{prewitt.jpg}
+        \caption{\centering Após aplicação de filtro de Prewitt (com \kernel de tamanho 5), nos dois eixos}
+        \label{fig:prewitt}
+    \end{subfigure}
+    \caption{Imagem original e com filtro de Prewitt}
+    \label{fig:prew}
+\end{figure}
+
+\begin{thebibliography}{99}
+    \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
+    \bibitem{opencv-sobel} \texttt{http://docs.opencv.org/doc/tutorials/imgproc/imgtrans/sobel\_derivatives/sobel\_derivatives.html}
+    \bibitem{bike} \texttt{http://en.wikipedia.org/wiki/File:Bikesgray.jpg}
+\end{thebibliography}
+
+\end{document}
