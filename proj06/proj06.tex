@@ -54,7 +54,69 @@
 % ============================================================================
 
 \section{Máscaras de Convolução e Detecção de contorno}
+Detecção de contorno utiliza a primeira e segunda derivadas da imagem. A derivada de uma imagem é definida como diferenças que devem ser nulas em regiões de níveis de cinza constante, não podem ser nulas em regiões de crescimento ou decrescimento do nível de cinza.
+
+Uma das formas mais simples de se difinir a primeira derivada em imagens digitaise dada pela fórmula:
+\begin{equation}
+  \frac{\partial f}{\partial x} = f(x + 1) - f(x)
+  \label{eq:first_deriv}
+\end{equation}
+
+E a segunda derivada pode ser definida como:
+\begin{equation}
+  \frac{\partial^2 f}{\partial x^2} = f(x + 1) + f(x - 1) - 2 \cdot f(x)
+  \label{eq:second_deriv}
+\end{equation}
+
+Portanto, em regiões em que a derivada é elevada, temos regiões de contorno.
+
 \section{Gradiente e Laplaciano discretos}
+\subsection{Gradiente}
+O gradiente de uma imagem é uma mudança direcional na intensidade de nível de cinza de uma imagem e pode ser definido como:
+\begin{equation}
+  \nabla f = \frac{\partial f}{\partial x} \hat{x} + \frac{\partial f}{\partial y} \hat{y}
+  \label{eq:gradient}
+\end{equation}
+
+\subsection{Laplaciano discretos}
+O laplaciano de uma imagem é o operador de derivação isotrópico mais simples de uma imagem e é definido como sendo:
+\begin{equation}
+  \nabla^{2} f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2}
+  \label{eq:laplaciano}
+\end{equation}
+
+Em sua forma discreta, através da equação da segunda derivada \ref{eq:second_deriv} podemos definir o Laplaciano como:
+\begin{equation}
+  \nabla^{2} f = [f(x + 1, y) + f(x - 1, y) + f(x, y + 1) + f(x, y - 1)] - 4 \cdot f(x,y)
+  \label{eq:discrete_laplaciano}
+\end{equation}
+
+Portanto a mascára de convolução do laplaciano é dada por:
+\begin{equation}
+  \nabla^{2} f =\left[\begin{array}{ccc}
+    0 &  1 & 0\\
+    1 & -4 & 1\\
+    0 &  1 & 0
+  \end{array}\right]
+  \label{mask:discrete_laplaciano}
+\end{equation}
+\newpage
+
+Um exemplo de aplicação do filtro pode ser observado em:
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{src.jpg}
+        \caption{Figura original\cite{bike}}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{laplacian.jpg}
+        \caption{\centering Após aplicação de filtro laplaciano}
+    \end{subfigure}
+    \label{fig:lapl}
+\end{figure}
+
 \section{Convolução e operadores direcionais}
 Uma forma de calcular o gradiente, ainda que de forma, já que uma imagem digital é discrea, é através de \kernels de convolução.
 \subsection{Máscaras direcionais}

@@ -20,11 +20,10 @@ if __name__ == '__main__':
     if src == None:
         uso()
     src = cv2.cvtColor(src, cv2.cv.CV_BGR2GRAY)
+
     # Sobel
     kernel_sobel_x = np.array([[-1,0,1],[-2,0,2],[-1,0,1]])
     kernel_sobel_y = np.array([[1,2,1],[0,0,0],[-1,-2,-1]])
-    print kernel_sobel_x
-    print kernel_sobel_y
     sobel_x = cv2.filter2D(src, -1, kernel_sobel_x)
     sobel_y = cv2.filter2D(src, -1, kernel_sobel_y)
     sobel = combine(sobel_x, sobel_y)
@@ -36,6 +35,11 @@ if __name__ == '__main__':
     prewitt_y = cv2.filter2D(src, -1, kernel_prewitt_y)
     prewitt = combine(prewitt_x, prewitt_y)
 
+    # Laplacian
+    kernel_laplacian = np.array([[0,1,0],[1,-4,1],[0,1,0]])
+    laplacian = cv2.filter2D(src, -1, kernel_laplacian)
+
+    # Escreve as imagens
     cv2.imwrite('src.jpg', src)
     cv2.imwrite('sobel.jpg', sobel)
     cv2.imwrite('sobel_x.jpg', sobel_x)
@@ -43,3 +47,4 @@ if __name__ == '__main__':
     cv2.imwrite('prewitt_x.jpg', prewitt_x)
     cv2.imwrite('prewitt_y.jpg', prewitt_y)
     cv2.imwrite('prewitt.jpg', prewitt)
+    cv2.imwrite('laplacian.jpg', laplacian)
