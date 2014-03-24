@@ -3,6 +3,8 @@ import numpy as np
 import sys
 import math
 
+L = 256 
+
 def uso():
     print 'Erro: nao foi possivel abrir a imagem fornecida'
     print 'Uso: python2 ' + sys.argv[0] + ' src dst'
@@ -10,6 +12,15 @@ def uso():
 
 def combine(gx, gy):
     return (gx+gy)/2
+
+
+def thresholding(src, thr=L/2):
+    t = np.ones(src.shape) * (L-1)
+    for x in range(src.shape[0]):
+        for y in range(src.shape[1]):
+            if src[x][y] < thr:
+                t[x][y] = 0
+    return t
 
 if __name__ == '__main__':
     # Le imagem e converte para grayscale
@@ -39,6 +50,13 @@ if __name__ == '__main__':
     kernel_laplacian = np.array([[0,1,0],[1,-4,1],[0,1,0]])
     laplacian = cv2.filter2D(src, -1, kernel_laplacian)
 
+    # Roberts
+    kernel_roberts_x = np.array([[1,0],[0,-1]])
+    kernel_roberts_y = np.array([[0,1],[-1,0]])
+    roberts_x = cv2.filter2D(src, -1, kernel_roberts_x)
+    roberts_y = cv2.filter2D(src, -1, kernel_roberts_y)
+    roberts = combine(roberts_x, roberts_y)
+
     # Escreve as imagens
     cv2.imwrite('src.jpg', src)
     cv2.imwrite('sobel.jpg', sobel)
@@ -48,3 +66,6 @@ if __name__ == '__main__':
     cv2.imwrite('prewitt_y.jpg', prewitt_y)
     cv2.imwrite('prewitt.jpg', prewitt)
     cv2.imwrite('laplacian.jpg', laplacian)
+    cv2.imwrite('roberts_x.jpg', roberts_x)
+    cv2.imwrite('roberts_y.jpg', roberts_y)
+    cv2.imwrite('roberts.jpg', roberts)

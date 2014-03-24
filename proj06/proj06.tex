@@ -220,6 +220,49 @@ Aplicando-se esta máscara, obtemos bons resultados, como ilustrado na Figura \r
     \label{fig:prew}
 \end{figure}
 
+\subsubsection{Roberts}
+Outro filtro bastante utilizado na detecção de bordas é a máscara de Roberts, que pode ser expressa por (\ref{eq:roberts}). Ela tem a vantagem de ser muito rápida de calcular, já que utiliza apenas quatro \pixels. Contudo, por utilizar um \kernel tão pequeno, é mais suscetível a ruídos do que a máscara de Sobel. Um exemplo de aplicação do filtro pode ser observado na Figura \ref{fig:rob}.
+
+\begin{equation}
+  G_x =\left[\begin{array}{cc}
+    1 & 0\\
+    0 & -1
+  \end{array}\right] \qquad
+  G_y =\left[\begin{array}{cc}
+    0 & 1\\
+    -1 & 0
+  \end{array}\right]
+  \label{eq:roberts}
+\end{equation}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{src.jpg}
+        \caption{Figura original\cite{bike}}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{roberts_x.jpg}
+        \caption{\centering Após aplicação de filtro de Roberts no eixo $x$}
+        \label{fig:roberts_x}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{roberts_y.jpg}
+        \caption{\centering Após aplicação de filtro de Roberts no eixo $y$}
+        \label{fig:roberts_y}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{roberts.jpg}
+        \caption{\centering Após aplicação de filtro de Roberts, nos dois eixos}
+        \label{fig:roberts}
+    \end{subfigure}
+    \caption{Imagem original e com filtro de Roberts}
+    \label{fig:rob}
+\end{figure}
+
 \begin{thebibliography}{99}
     \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
     \bibitem{opencv-sobel} \texttt{http://docs.opencv.org/doc/tutorials/imgproc/imgtrans/sobel\_derivatives/sobel\_derivatives.html}
