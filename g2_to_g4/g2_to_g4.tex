@@ -1,0 +1,107 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{ae}
+\usepackage[brazil]{babel}
+\usepackage[vmargin=2cm,hmargin=2cm,columnsep=0.75cm]{geometry}
+\usepackage{float,nonfloat}
+\usepackage{graphicx,color}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{verbatim}
+
+\makeatletter
+\let\@institution\empty
+\def\institution#1{\def\@institution{#1}}
+\renewcommand{\maketitle}{
+    \begin{center}
+        {\Large\bfseries\@title\par\medskip}
+        {\large
+            \begin{tabular}[t]{c}%
+                \@author
+        \end{tabular}\par\medskip}
+        {\itshape\@institution\par}
+        {\itshape\@date\par}
+\end{center}}
+\makeatother
+
+\newcommand{\pixel}{\textit{pixel} }
+\newcommand{\pixels}{\textit{pixels} }
+\newcommand{\kernel}{\textit{kernel} }
+\newcommand{\kernels}{\textit{kernels} }
+
+\begin{document}
+% ============================================================================
+
+\title{MC920: Introdução ao Processamento de Imagem Digital\\Questões G2 $\rightarrow$ G4}
+\author{
+    \begin{minipage}{6cm}
+        \centering
+        Martin Ichilevici de Oliveira\\
+        RA 118077
+    \end{minipage}
+    \and
+    \begin{minipage}{6cm}
+        \centering
+        Rafael Almeida Erthal Hermano\\
+        RA 121286
+    \end{minipage}
+}
+\institution{Instituto de Computação, Universidade Estadual de Campinas}
+\date{\today}
+
+\newcommand{\itemm}[1]{\item \textbf{#1}}
+
+\maketitle
+
+% ============================================================================
+
+\section{Difusão anisotrópica}
+
+\begin{enumerate}
+\itemm{Qual a relação entre os filtros passa-altas e passa-baixas com o contraste das imagens?}
+
+Filtros passa-altas, como o próprio nome já diz, permite a passagem de altas frequências, que são características de imagens bem definidas. Assim, este tipo de filtro aumenta o contraste da imagem. Já os filtros passa-baixas, tais como o \textit{Gaussian Blur}, tem por objetivo remover ruídos, através do borramento da imagem. Assim, estes filtros diminuem o contraste de uma imagem.
+
+\itemm{Derivadas parciais compõem o gradiente de uma imagem e são lineares, porém não são isotrópicas. Por quê? E quanto à magnitude do gradiente?}
+\itemm{Como seriam as máscaras dos filtros de Prewitt e Sobel para a detecção de bordas diagonais?}
+
+Vamos denotar as matrizes que detectam diagonais principais com índice $p$ e aquelas que detectam diagonais secundárias com índice $s$. Assim, as máscaras de Prewitt seriam dadas por
+
+\[P_p = \left[\begin{array}{ccc}
+  -1 & -1 & 0 \\
+  -1 &  0 & 1 \\
+  0  &  1 & 1
+\end{array}\right]
+\qquad
+P_s = \left[\begin{array}{ccc}
+  0 & 1 & 1 \\
+  -1 &  0 & 1 \\
+  -1  & -1 & 0
+\end{array}\right]
+\]
+
+Já a máscara de Sobel seria dada por
+
+\[S_p = \left[\begin{array}{ccc}
+  -2 & -1 & 0 \\
+  -1 &  0 & 1 \\
+  0  &  1 & 2
+\end{array}\right]
+\qquad
+S_s = \left[\begin{array}{ccc}
+  0 & 1 & 2 \\
+  -1 &  0 & 1 \\
+  -2  & -1 & 0
+\end{array}\right]
+\]
+\itemm{Seria possível detectar o gradiente de uma imagem através da convolução de um filtro de ordem estatística (e.g. filtros de máximo e mínimo)? Como?}
+
+  Não. Um filtro de ordem estatística desconsidera o arranjo dos \pixels em uma imagem, e leva em conta apenas seus valores. Considere por exemplo duas sub-imagens $3\times3$ com o mesmo histograma (isto é, com a mesma quantidade de \pixels em cada nível de intensidade), mas cuja distribuição de \pixels seja diferente. Se fosse aplicado um filtro de ordem estatística, este produziria o mesmo resultado em ambas as imagens. Contudo, é claro que seus gradientes devem ser diferentes. Afinal, o gradiente, por sua própria definição, considera o conjunto de pontos ao redor do centro, o que não é feito em filtros de ordem estatística -- apenas um deles é escolhido (tal como o mínimo, o máximo ou a mediana).
+\end{enumerate}
+
+\begin{thebibliography}{99}
+    \bibitem{livro2} CRISTOBAL, G.; SCHELKENS, P.; THIENPONT, H. \textbf{Optical and Digital Image Processing: Fundamentals and Applications}. 1. ed. Wiley-VCH, 2011.
+    \bibitem{high-pass} \texttt{http://www.digitalphotopro.com/software/image-processing/the-high-pass-filter.html}
+\end{thebibliography}
+
+\end{document}
