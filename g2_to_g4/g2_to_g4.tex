@@ -64,15 +64,16 @@ Filtros passa-altas, como o próprio nome já diz, permite a passagem de altas f
 
 \itemm{Derivadas parciais compõem o gradiente de uma imagem e são lineares, porém não são isotrópicas. Por quê? E quanto à magnitude do gradiente?}
 \itemm{Como seriam as máscaras dos filtros de Prewitt e Sobel para a detecção de bordas diagonais?}
-As máscaras de Prewitt seriam dadas por
 
-\[P_x = \left[\begin{array}{ccc}
+Vamos denotar as matrizes que detectam diagonais principais com índice $p$ e aquelas que detectam diagonais secundárias com índice $s$. Assim, as máscaras de Prewitt seriam dadas por
+
+\[P_p = \left[\begin{array}{ccc}
   -1 & -1 & 0 \\
   -1 &  0 & 1 \\
   0  &  1 & 1
 \end{array}\right]
 \qquad
-P_y = \left[\begin{array}{ccc}
+P_s = \left[\begin{array}{ccc}
   0 & 1 & 1 \\
   -1 &  0 & 1 \\
   -1  & -1 & 0
@@ -81,13 +82,13 @@ P_y = \left[\begin{array}{ccc}
 
 Já a máscara de Sobel seria dada por
 
-\[S_x = \left[\begin{array}{ccc}
+\[S_p = \left[\begin{array}{ccc}
   -2 & -1 & 0 \\
   -1 &  0 & 1 \\
   0  &  1 & 2
 \end{array}\right]
 \qquad
-S_y = \left[\begin{array}{ccc}
+S_s = \left[\begin{array}{ccc}
   0 & 1 & 2 \\
   -1 &  0 & 1 \\
   -2  & -1 & 0
@@ -95,7 +96,7 @@ S_y = \left[\begin{array}{ccc}
 \]
 \itemm{Seria possível detectar o gradiente de uma imagem através da convolução de um filtro de ordem estatística (e.g. filtros de máximo e mínimo)? Como?}
 
-  Não. Um filtro de ordem estatística desconsidera o arranjo dos \pixels em uma imagem, e leva em conta apenas seus valores. Considere duas imagens $3\times3$ com o mesmo histograma (isto é, com a mesma quantidade de \pixels em cada nível de intensidade), mas cuja distribuição de \pixels fosse diferente. Se fosse aplicada um filtro de ordem estatística, estes produziriam o mesmo resultado. Contudo, é claro que seus gradientes devem ser diferentes. Afinal, o gradiente, por sua própria natureza, considera o conjunto de pontos ao redor do centro, o que não é feito em filtros de ordem estatística -- apenas um deles é escolhido (tal como o mínimo, o máximo ou a mediana).
+  Não. Um filtro de ordem estatística desconsidera o arranjo dos \pixels em uma imagem, e leva em conta apenas seus valores. Considere por exemplo duas sub-imagens $3\times3$ com o mesmo histograma (isto é, com a mesma quantidade de \pixels em cada nível de intensidade), mas cuja distribuição de \pixels seja diferente. Se fosse aplicado um filtro de ordem estatística, este produziria o mesmo resultado em ambas as imagens. Contudo, é claro que seus gradientes devem ser diferentes. Afinal, o gradiente, por sua própria definição, considera o conjunto de pontos ao redor do centro, o que não é feito em filtros de ordem estatística -- apenas um deles é escolhido (tal como o mínimo, o máximo ou a mediana).
 \end{enumerate}
 
 \begin{thebibliography}{99}
