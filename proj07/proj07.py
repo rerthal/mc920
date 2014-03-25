@@ -43,11 +43,12 @@ def aniso_diff(img,niter=1,kappa=50,gamma=0.1,step=(1.,1.)):
         gS = np.exp(-(deltaS/kappa)**2.)/step[0]
         gE = np.exp(-(deltaE/kappa)**2.)/step[1]
 
-        E = gE*deltaE
         S = gS*deltaS
+        E = gE*deltaE
 
         NS[:] = S
         EW[:] = E
+
         NS[1:,:] -= S[:-1,:]
         EW[:,1:] -= E[:,:-1]
 
