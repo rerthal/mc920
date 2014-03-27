@@ -151,6 +151,49 @@ Adicionando ruído do tipo gaussiano à imagem, obtemos o resultado expresso na 
     \label{fig:aniso_diff_ga}
 \end{figure}
 
+\section{Outros experimentos}
+Realizou-se o experimento com outras imagens, como mostra a Figura \ref{fig:china}.
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{china_src.jpg}
+        \caption{Figura original}
+        \label{fig:china_src}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{china_aniso.jpg}
+        \caption{\centering Após aplicação de difusão anisotrópica}
+        \label{fig:china_aniso}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[ht]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{china_dst_sp.jpg}
+        \caption{\centering Adição de ruído sal e pimenta}
+        \label{fig:china_sp}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{china_aniso_sp.jpg}
+        \caption{\centering Após aplicação de difusão anisotrópica com ruído sal e pimenta}
+        \label{fig:china_sp_aniso}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[ht]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{china_dst_ga.jpg}
+        \caption{\centering Adição de ruído gaussiano}
+        \label{fig:china_ga}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{china_aniso_sp.jpg}
+        \caption{\centering Após aplicação de difusão anisotrópica com gaussiano}
+        \label{fig:china_ga_aniso}
+    \end{subfigure}
+    \caption{Aplicação de filtro anisotrópico em imagem com diferentes tipos de ruído.}
+    \label{fig:china}
+\end{figure}
+
 \begin{thebibliography}{99}
     \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
     \bibitem{opencv-sobel} \texttt{http://docs.opencv.org/doc/tutorials/imgproc/imgtrans/sobel\_derivatives/sobel\_derivatives.html}

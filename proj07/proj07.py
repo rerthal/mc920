@@ -25,7 +25,7 @@ def gaussian(src, a, b):
             dst[i][j] = dst[i][j] + noise[i][j]
     return dst
 
-def aniso_diff(img,niter=1,kappa=50,gamma=0.1,step=(1.,1.)):
+def aniso_diff(img,niter=10,kappa=50,gamma=0.1,step=(1.,1.)):
     img = img.astype('float32')
     imgout = img.copy()
 
