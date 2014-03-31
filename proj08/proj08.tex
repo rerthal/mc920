@@ -1,0 +1,185 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{pgfplots, pgfplotstable}
+\usepackage{ae}
+\usepackage[brazil]{babel}
+\usepackage[vmargin=2cm,hmargin=2cm,columnsep=0.75cm]{geometry}
+\usepackage{float,nonfloat}
+\usepackage{graphicx,color}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{verbatim}
+
+\makeatletter
+\let\@institution\empty
+\def\institution#1{\def\@institution{#1}}
+\renewcommand{\maketitle}{
+    \begin{center}
+        {\Large\bfseries\@title\par\medskip}
+        {\large
+            \begin{tabular}[t]{c}%
+                \@author
+        \end{tabular}\par\medskip}
+        {\itshape\@institution\par}
+        {\itshape\@date\par}
+\end{center}}
+\makeatother
+
+\newcommand{\pixel}{\textit{pixel} }
+\newcommand{\pixels}{\textit{pixels} }
+\newcommand{\kernel}{\textit{kernel} }
+\newcommand{\kernels}{\textit{kernels} }
+
+\begin{document}
+% ============================================================================
+
+\title{MC920: Introdução ao Processamento de Imagem Digital\\Tarefa 8}
+\author{
+    \begin{minipage}{6cm}
+        \centering
+        Martin Ichilevici de Oliveira\\
+        RA 118077
+    \end{minipage}
+    \and
+    \begin{minipage}{6cm}
+        \centering
+        Rafael Almeida Erthal Hermano\\
+        RA 121286
+    \end{minipage}
+}
+\institution{Instituto de Computação, Universidade Estadual de Campinas}
+\date{\today}
+
+\maketitle
+
+% ============================================================================
+
+\section{Critérios de fidelidade aplicados a filtragem de ruídos}
+\subsection{Critérios de fidelidade}
+\subsubsection{Erro total}
+O error total mede o quadrado das diferenças entre os pontos originais e o resultado.
+
+\begin{equation}
+    e = \sum_{x = 0}^{M - 1} \sum_{y = 0}^{N - 1} [\hat{f}(x,y) - f(x,y)]^2
+    \label{eq:error}
+\end{equation}
+
+\subsubsection{Erro médio quadrático}
+O erro médio quadrático pode ser definido como:
+
+\begin{equation}
+    e_{rms} = \left[\frac{1}{MN} \sum_{x = 0}^{M - 1} \sum_{y = 0}^{N - 1} [\hat{f}(x,y) - f(x,y)]^2 \right]^{\frac{1}{2}}
+    \label{eq:error_rms}
+\end{equation}
+
+\subsubsection{Relação sinal ruído}
+A relação sinal ruído pode ser definida como:
+
+\begin{equation}
+    SNR_{ms} =\frac{\sum_{x = 0}^{M - 1} \sum_{y = 0}^{N - 1} \hat{f}(x,y)^{2} }{\sum_{x = 0}^{M - 1} \sum_{y = 0}^{N - 1} [\hat{f}(x,y) - f(x,y)]^2}
+    \label{eq:snr}
+\end{equation}
+
+\subsection{Critérios de qualidade}
+Para imagens cuja a finalidade é a observação pelo olho humano, o único método correto de avaliar a qualidade da imagem é a avaliação subjetiva \cite{article}, contudo, o método de índice de similaridade estrutural(SSIM), se propõem à de forma objetiva conseguir resproduzir os resultados subjetivos. O SSIM pode ser definido como:
+
+\begin{equation}
+    SSIM(X,Y) = [l(x,y)]^{\alpha} \cdot [c(x,y)]^{\beta} \cdot [s(x,y)]^{\gamma}
+    \label{eq:ssim_trash}
+\end{equation}
+
+Onde $l(x,y)$ é a comparação da luminância, $c(x,y)$ comparação de contraste e $s(x,y)$ compara estruturas. Os expoentes $\alpha, \beta, \gamma$ são parâmetros para ponderar as importâncias de cada componente, e todos devem ser positivos.
+
+\subsubsection*{Comparação da luminância}
+Para comparação de luminância, devemos utilizar uma função que seja simétrica, limitada e possua um máximo único. A função usada é dada por:
+
+\begin{equation}
+    l(x,y) = \frac{2 \mu_x \mu_y + C_1}{\mu_x^2 + \mu_y^2 + C_1}
+    \label{eq:lum}
+\end{equation}
+
+Onde, $\mu_x, \mu_y$ são as médias dos pixels nos eixos e $C_1$ é uma constante para evitar instabilidades quando $\mu_x^2 + \mu_y^2$ se aproxima de $0$.
+
+\subsubsection*{Comparação da contraste}
+A função de comparação de contraste é análoga à comparação de luminância. A função usada é dada por:
+
+\begin{equation}
+    l(x,y) = \frac{2 \sigma_x \sigma_y + C_2}{\sigma_x^2 + \sigma_y^2 + C_2}
+    \label{eq:cont}
+\end{equation}
+
+Onde, $\sigma_x, \sigma_y$ é o desvio padrão dos valores dos pixels nos eixos.
+
+\subsubsection*{Comparação da estruturas}
+A função usada na comparação de estruturas é dada por:
+
+\begin{equation}
+    l(x,y) = \frac{2 \sigma_{xy} + C_3}{\sigma_x \sigma_y + C_3}
+    \label{eq:estru}
+\end{equation}
+
+Onde $\sigma_{xy}$ é definida como:
+
+\begin{equation}
+    \sigma_{xy} = \frac{1}{N - 1} \sum_{i = 1}^{N}(x_i - \mu_x)(y_i - \mu_y )
+    \label{eq:sigmaxy}
+\end{equation}
+
+\subsubsection*{Implementação utilizada}
+Do trabalho \cite{article}, vamos definir os expoentes como sendo $\alpha = \beta = \gamma = 1$. Tendo assim a função SSIM como sendo:
+
+\begin{equation}
+    SSIM(X,Y) = \frac{(2 \mu_x \mu_y + C_1) (2 \sigma_{xy} + C_2)}{(\mu_x^2 + \mu_y^2 + C_1)(\sigma_x^2 + \sigma_y^2 + C_2)}
+    \label{eq:ssim}
+\end{equation}
+
+\subsection{Comparação entre imagens filtradas}
+Foram aplicados os ruídos, gaussiano e sal e pimenta em uma imagem e em seguida, foram aplicados os filtros gaussiano, da mediana e difusão anisotrópica.
+Com os resultados das filtragens, foram calculados os erros total, médio quadrático, relação sinal ruído e o índice de similaridade estrutural \cite{article}. Com os resultados a seguir:
+
+\begin{table}[!ht]
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+ & Total & Médio quadrático & Sinal Ruído & SSIM \\ \hline
+ Filtro gaussiano sobre ruído gaussiano         &  &  &  &  \\ \hline
+ Filtro gaussiano sobre ruído sal e pimenta     &  &  &  &  \\ \hline
+ Filtro da mediana sobre ruído gaussiano        &  &  &  &  \\ \hline
+ Filtro da mediana sobre ruído sal e pimenta    &  &  &  &  \\ \hline
+ Difusão anisotrópica sobre ruído gaussiano     &  &  &  &  \\ \hline
+ Difusão anisotrópica sobre ruído sal e pimenta &  &  &  &  \\ \hline
+\end{tabular}
+\end{table}
+
+Para a difusão anisotrópica, foi realizada um \textit{grid search} variando o número de iterações, \textit{gamma} e o \textit{kappa}, os resultados do índice de similaridade estrutural para cada item foram plotados nos seguintes gráficos.
+
+\begin{center}
+\begin{tikzpicture}
+    \begin{axis}[xlabel=Iterações, ylabel=SSIM]
+    \addplot coordinates {};
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+    \begin{axis}[xlabel=Kappa, ylabel=SSIM]
+    \addplot coordinates {};
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+    \begin{axis}[xlabel=Gamma, ylabel=SSIM]
+    \addplot coordinates {};
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
+\begin{thebibliography}{99}
+    \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
+    \bibitem{article} WANG, Z.; BOVIK, Alan C.;SHEIKH, Hamid R.; SIMONCELLI, Eero P.; \textbf{Image Quality Assessment: From error visibility to structural similarity}. IEEE Transactions on Image Processing, vol. 13, no. 4, 2004.
+\end{thebibliography}
+
+\end{document}
