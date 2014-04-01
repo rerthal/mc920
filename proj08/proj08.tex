@@ -150,7 +150,7 @@ Segundo \cite{article}, se o objetivo é avaliar a qualidade de uma imagem, não
 \section{Experimentos}
 \subsection{Comparação de índices}
 Foram aplicados os ruídos, gaussiano e sal e pimenta em uma imagem e em seguida, foram aplicados os filtros gaussiano, da mediana e difusão anisotrópica.
-Com os resultados das filtragens, foram calculados os erros total, médio quadrático, relação sinal ruído e o índice de similaridade estrutural \cite{article}. As imagens podem ser vistas na Figura \ref{fig:all} e os resultados estão expressos na Tabela \ref{tab:results}
+Com os resultados das filtragens, foram calculados os erros total, médio quadrático, relação sinal ruído e o índice de similaridade estrutural \cite{article}. As imagens podem ser vistas nas Figuras \ref{fig:sp} and \ref{fig:ga} e os resultados estão expressos na Tabela \ref{tab:results}
 \begin{figure}[!ht]
     \centering
         \includegraphics[width=0.45\textwidth]{src.jpg}
@@ -162,63 +162,68 @@ Com os resultados das filtragens, foram calculados os erros total, médio quadr�
     \centering
     \begin{subfigure}[ht]{0.45\textwidth}
         \includegraphics[width=\textwidth]{sp.jpg}
-        \caption{Com ruído \textit{salt and pepper}}
+        \caption{Com ruído.}
     \end{subfigure}
     \qquad
     \begin{subfigure}[ht]{0.45\textwidth}
         \includegraphics[width=\textwidth]{sp_median.jpg}
-        \caption{Filtro da mediana em ruído \textit{salt and pepper}}
+        \caption{Filtro da mediana.}
     \end{subfigure}
     \\
     \begin{subfigure}[ht]{0.45\textwidth}
         \includegraphics[width=\textwidth]{sp_gaussian.jpg}
-        \caption{Filtro da Gaussiana em \textit{salt and pepper}}
+        \caption{Filtro da Gaussiana.}
     \end{subfigure}
     \qquad
     \begin{subfigure}[ht]{0.45\textwidth}
         \includegraphics[width=\textwidth]{sp_aniso.jpg}
-        \caption{Difusão anisotrópica em \textit{salt and pepper}}
+        \caption{Difusão anisotrópica.}
     \end{subfigure}
-    \\
+    \caption{Imagens com ruído sal e pimenta.}
+    \label{fig:sp}
+\end{figure}
+\begin{figure}[!ht]
     \begin{subfigure}[ht]{0.45\textwidth}
         \includegraphics[width=\textwidth]{ga.jpg}
-        \caption{Com ruído Gaussiano}
+        \caption{Com ruído.}
     \end{subfigure}
     \qquad
     \begin{subfigure}[ht]{0.45\textwidth}
         \includegraphics[width=\textwidth]{ga_median.jpg}
-        \caption{Filtro da mediana em ruído Gaussiano}
+        \caption{Filtro da mediana.}
     \end{subfigure}
     \\
     \begin{subfigure}[ht]{0.45\textwidth}
         \includegraphics[width=\textwidth]{ga_gaussian.jpg}
-        \caption{Filtro da Gaussiana em ruído Gaussiano}
+        \caption{Filtro da Gaussiana.}
     \end{subfigure}
     \qquad
     \begin{subfigure}[ht]{0.45\textwidth}
         \includegraphics[width=\textwidth]{ga_aniso.jpg}
-        \caption{Difusão anisotrópica em ruído gaussiano}
+        \caption{Difusão anisotrópica.}
     \end{subfigure}
-    \caption{Imagens com ruídos e com filtros aplicados}
-    \label{fig:all}
+    \caption{Imagens com ruído Gaussiano.}
+    \label{fig:ga}
 \end{figure}
 
 \begin{table}[!ht]
 \begin{tabular}{cccccc}
 \toprule
 Filtro & Ruído & Total & Médio quadrático & Sinal Ruído & SSIM \\ \midrule
-\multirow{2}{*}{Gaussiano}              & Gaussiano         & 78489 & 0.505 & 1.019 & 0.967 \\
-                                        & Sal e pimenta     & 84155 & 0.523 & 0.963 & 0.983 \\\midrule
-\multirow{2}{*}{Mediana}                & Gaussiano         & 84850 & 0.526 & 0.976 & 0.985 \\
-                                        & Sal e pimenta    & 84832 & 0.525 & 0.947 & 0.995 \\\midrule
-\multirow{2}{*}{Difusão anisotrópica}   & Gaussiano     & 170205517 & 23.538 & 29.630 & 0.913 \\
-                                        & Sal e pimenta & 107418886 & 18.699 & 45.079 & 0.945 \\\bottomrule
+\multirow{2}{*}{Gaussiano}              & Gaussiano         & 125224 & 0.447 & 0.970 & 0.976 \\
+                                        & Sal e pimenta     & 125151 & 0.447 & 1.007 & 0.973 \\\midrule
+\multirow{2}{*}{Mediana}                & Gaussiano         & 121028 & 0.439 & 1.018 & 0.978\\
+                                        & Sal e pimenta     & 122391 & 0.442 & 0.990 & 0.982\\\midrule
+\multirow{2}{*}{Difusão anisotrópica}   & Gaussiano         & 76987294 & 11.079 & 199.905 & 0.974 \\
+                                          & Sal e pimenta   & 176993532 & 16.798 & 85.637 & 0.941 \\\bottomrule
 \end{tabular}
-\caption{Medidas de erros e similaridade para as images da Figura \ref{fig:all}}
+\caption{Medidas de erros e similaridade para as images das Figuras \ref{fig:sp} e \ref{fig:ga}}
 \label{tab:results}
 \end{table}
 
-Como podemos ver na Tabela \ref{tab:results}, todos os índices são compatíveis entre si. Isto é, imagens que tiveram alto erro total, erro médio quadrático ou sinal-ruído tiveram os menores valores de $\mathit{SSIM}$. Curiosamente, a Difusão anisotrópica foi a que apresentou os piores resultados, tanto visualmente como pelos índices.
+Na Figura \ref{fig:sp}, visualmente podemos concluir que o filtro da mediana foi o mais adequado para remvoer o ruído sal e pimenta, seguido pelo filtro Gaussiano e finalmente pela difusão anisotrópica. Os resultados da Tabela \ref{tab:results}, comprovam este argumento, já que o filtro da mediana foi, dentre todos aqueles aplicados ao ruído sal e pimenta, o que obteve menor erro (total e quadrático médio) e sinal-ruído. Além disso, obteve o maior $\mathit{SSIM}$. Análise semelhante pode ser feita para as imagens com ruído Gaussiano.
+
+Além disso, podemos ver na Tabela \ref{tab:results}, todos os índices são compatíveis entre si. Isto é, imagens que tiveram alto erro total, erro médio quadrático ou sinal-ruído tiveram os menores valores de $\mathit{SSIM}$. Curiosamente, a Difusão anisotrópica foi a que apresentou os piores resultados, tanto visualmente como pelos índices.
 
 \subsection{Difusão anisotrópica e o $\mathit{SSIM}$}
 Para a difusão anisotrópica, estudou-se como a variação dos parâmetros número de iterações, $\kappa$ e $\gamma$ afetava a imagem original, através de um \textit{grid search}. Os resultados do índice de similaridade estrutural para cada item foram plotados nos gráficos da Figura \ref{fig:simm_aniso}. Podemos ver como o número de iterações claramente borra a imagem, já que o $\mathit{SSIM}$ decresce conforme aumentamos o número de iterações. O mesmo pode ser dito para $\gamma$. Aumentar $\kappa$, por outro lado, tem o efeito inverso - a imagem produzida é mais parecida com a original, o que pode ser constatado com o maior valor de $\mathit{SSIM}$.
@@ -228,16 +233,16 @@ Para a difusão anisotrópica, estudou-se como a variação dos parâmetros núm
 \begin{tikzpicture}
     \begin{axis}[xlabel=Iterações, ylabel=SSIM]
     \addplot coordinates {
-( 1 , 0.915177942542 )
-( 51 , 0.886941784946 )
-( 101 , 0.866595195783 )
-( 151 , 0.851691418409 )
-( 201 , 0.83953047326 )
-( 251 , 0.8293627615 )
-( 301 , 0.820514897407 )
-( 351 , 0.812721788225 )
-( 401 , 0.805870831974 )
-( 451 , 0.79974339225 )};
+( 1 , 0.986309013763 )
+( 51 , 0.932204295582 )
+( 101 , 0.910927276912 )
+( 151 , 0.897669196163 )
+( 201 , 0.887760133852 )
+( 251 , 0.879828794523 )
+( 301 , 0.8731827502 )
+( 351 , 0.867436378682 )
+( 401 , 0.862366999393 )
+( 451 , 0.857795723511 )};
     \end{axis}
 \end{tikzpicture}
 \caption{Variação do número de interações}
@@ -247,16 +252,16 @@ Para a difusão anisotrópica, estudou-se como a variação dos parâmetros núm
 \begin{tikzpicture}
     \begin{axis}[xlabel=$\kappa$, ylabel=SSIM]
     \addplot coordinates {
-( 1 , 0.909192998739 )
-( 51 , 0.912909821173 )
-( 101 , 0.911403807952 )
-( 151 , 0.9599412168 )
-( 201 , 0.965680017742 )
-( 251 , 0.966272814367 )
-( 301 , 0.966464712277 )
-( 351 , 0.966560333193 )
-( 401 , 0.966614383602 )
-( 451 , 0.966649017241 )};
+( 1 , 0.978632350663 )
+( 51 , 0.973912578954 )
+( 101 , 0.966050064742 )
+( 151 , 0.965792680024 )
+( 201 , 0.965440492803 )
+( 251 , 0.965263161468 )
+( 301 , 0.965169396388 )
+( 351 , 0.965115504794 )
+( 401 , 0.965077321176 )
+( 451 , 0.965051568364 )};
     \end{axis}
 \end{tikzpicture}
 \caption{Variação de $\kappa$.}
@@ -266,16 +271,16 @@ Para a difusão anisotrópica, estudou-se como a variação dos parâmetros núm
 \begin{tikzpicture}
     \begin{axis}[xlabel=$\gamma$, ylabel=SSIM]
     \addplot coordinates {
-( 0.002 , 0.91067806574 )
-( 0.102 , 0.912886329381 )
-( 0.202 , 0.904948974613 )
-( 0.302 , 0.892062808193 )
-( 0.402 , 0.868458974177 )
-( 0.502 , 0.85516485332 )
-( 0.602 , 0.843687861726 )
-( 0.702 , 0.834978764209 )
-( 0.802 , 0.824419203523 )
-( 0.902 , 0.810539185831 )};
+( 0.002 , 0.980492247625 )
+( 0.102 , 0.973861554259 )
+( 0.202 , 0.957814305235 )
+( 0.302 , 0.938431847732 )
+( 0.402 , 0.904635673008 )
+( 0.502 , 0.887932966302 )
+( 0.602 , 0.87324589108 )
+( 0.702 , 0.861412245273 )
+( 0.802 , 0.846819656426 )
+( 0.902 , 0.828001023647 )};
     \end{axis}
 \end{tikzpicture}
 \caption{Variação de $\gamma$}

@@ -91,6 +91,13 @@ def aniso_diff(img,niter=10,kappa=50,gamma=0.1,step=(1.,1.)):
     return imgout
 
 def salt_and_pepper_noise(src, a, b, Pa=0, Pb=255):
+    count = [0]*L
+    for i in range(src.shape[0]):
+        for j in range(src.shape[1]):
+            count[src[i][j]] += 1
+    n = L/2
+    a = count[:n].index(max(count[:n]))
+    b = count[n:].index(max(count[n:]))
     dst = np.copy(src)
     for i in range(dst.shape[0]):
         for j in range(dst.shape[1]):
@@ -111,7 +118,7 @@ def gaussian_noise(src, a, b):
 src = cv2.imread(sys.argv[1])
 src = cv2.cvtColor(src, cv2.cv.CV_BGR2GRAY)
 
-sp = salt_and_pepper_noise(src, 135, 17)
+sp = salt_and_pepper_noise(src, 180, 122)
 sp_median = cv2.medianBlur(sp, 3)
 sp_gaussian = cv2.GaussianBlur(sp, ksize=(3,3), sigmaX=135)
 sp_aniso = aniso_diff(sp)
@@ -121,7 +128,7 @@ ga_median = cv2.medianBlur(ga, 3)
 ga_gaussian = cv2.GaussianBlur(ga, ksize=(3,3), sigmaX=135)
 ga_aniso = aniso_diff(ga)
 
-'''
+
 cv2.imwrite('src.jpg',src)
 cv2.imwrite('sp.jpg',sp)
 cv2.imwrite('sp_median.jpg',sp_median)
@@ -131,7 +138,7 @@ cv2.imwrite('ga.jpg',ga)
 cv2.imwrite('ga_median.jpg',ga_median)
 cv2.imwrite('ga_gaussian.jpg',ga_gaussian)
 cv2.imwrite('ga_aniso.jpg',ga_aniso)
-'''
+
 
 #print mssim(src, ga_gaussian, 11)
 #print mssim(src, sp)
@@ -156,7 +163,7 @@ print "Difusao anisotropica sobre ruido gaussiano     & %d & %.3f & %.3f & %.3f 
 
 print "Difusao anisotropica sobre ruido sal e pimenta & %d & %.3f & %.3f & %.3f \\\\\hline" % (total_error(src, sp_aniso), rms_error(src, sp_aniso), snr_error(src, sp_aniso), ssim(src, sp_aniso, c1=c1, c2=c2, c3=c3))
 
-'''
+
 print "niter graph"
 for x in range(1,500,50):
     filtered = aniso_diff(ga, niter=x)
@@ -174,4 +181,4 @@ for x in [z/500.0 for z in range(1, 500,50)]:
     filtered = aniso_diff(ga, gamma=x)
     error    = ssim(src, filtered)
     print "(", x, ",", error, ")"
-'''
+
