@@ -207,15 +207,15 @@ Com os resultados das filtragens, foram calculados os erros total, médio quadr�
 \end{figure}
 
 \begin{table}[!ht]
-\begin{tabular}{cccccc}
+\begin{tabular}{ccccccc}
 \toprule
-Filtro & Ruído & Total & Médio quadrático & Sinal Ruído & SSIM \\ \midrule
-\multirow{2}{*}{Gaussiano}              & Gaussiano         & 125224 & 0.447 & 0.970 & 0.976 \\
-                                        & Sal e pimenta     & 125151 & 0.447 & 1.007 & 0.973 \\\midrule
-\multirow{2}{*}{Mediana}                & Gaussiano         & 121028 & 0.439 & 1.018 & 0.978\\
-                                        & Sal e pimenta     & 122391 & 0.442 & 0.990 & 0.982\\\midrule
-\multirow{2}{*}{Difusão anisotrópica}   & Gaussiano         & 76987294 & 11.079 & 199.905 & 0.974 \\
-                                          & Sal e pimenta   & 176993532 & 16.798 & 85.637 & 0.941 \\\bottomrule
+         Filtro                         & Ruído         & Total     & Médio quadrático & Sinal Ruído & SSIM  & MSSIM\\ \midrule
+\multirow{2}{*}{Gaussiano}              & Gaussiano     & 125224    & 0.447            & 0.970       & 0.976 & 0.734\\
+                                        & Sal e pimenta & 125151    & 0.447            & 1.007       & 0.973 & 0.824\\\midrule
+\multirow{2}{*}{Mediana}                & Gaussiano     & 121028    & 0.439            & 1.018       & 0.978 & 0.712\\
+                                        & Sal e pimenta & 122391    & 0.442            & 0.990       & 0.982 & 0.877\\\midrule
+\multirow{2}{*}{Difusão anisotrópica}   & Gaussiano     & 76987294  & 11.079           & 199.905     & 0.974 & 0.750\\
+                                        & Sal e pimenta & 176993532 & 16.798           & 85.637      & 0.941 & 0.699\\\bottomrule
 \end{tabular}
 \caption{Medidas de erros e similaridade para as images das Figuras \ref{fig:sp} e \ref{fig:ga}}
 \label{tab:results}
