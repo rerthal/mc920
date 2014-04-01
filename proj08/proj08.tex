@@ -115,7 +115,7 @@ A função de comparação de contraste é análoga à comparação de luminânc
 
 Onde, $\sigma_x, \sigma_y$ é o desvio padrão dos valores dos pixels nos eixos. A constante $C_2 = (K_2L)^2$, $K_2 \ll 1$ tem a mesma função de $C_1$.
 
-\subsubsection*{Experimentos}
+\subsubsection*{Comparação de estruturas}
 A função usada na comparação de estruturas é dada por:
 
 \begin{equation}
@@ -138,7 +138,17 @@ Do trabalho \cite{article}, vamos definir os expoentes como sendo $\alpha = \bet
     \label{eq:ssim}
 \end{equation}
 
+Segundo \cite{article}, se o objetivo é avaliar a qualidade de uma imagem, não é apropriado usar o $\mathit{SSIM}$ aplicando-o a toda à figura. Ao contrário, os autores recomendam a utilização do $\mathit{MSSIM}$, que é formado pela média da aplicação do $\mathit{SSIM}$ a diversos \textit{grids} da imagem. Em nossos experimentos, utilizamos um \textit{grid} de $11 \times 11$, assim como os autores. Formalmente, temos:
+
+\begin{equation}
+    \mathit{MSSIM}(X,Y) = \frac{1}{M} \sum_{j=1}^M \mathit{SSIM}(x_j, y_j)
+    \label{eq:mssim}
+\end{equation}
+
+\newpage
+
 \section{Experimentos}
+\subsection{Comparação de índices}
 Foram aplicados os ruídos, gaussiano e sal e pimenta em uma imagem e em seguida, foram aplicados os filtros gaussiano, da mediana e difusão anisotrópica.
 Com os resultados das filtragens, foram calculados os erros total, médio quadrático, relação sinal ruído e o índice de similaridade estrutural \cite{article}. As imagens podem ser vistas na Figura \ref{fig:all} e os resultados estão expressos na Tabela \ref{tab:results}
 \begin{figure}[!ht]
@@ -201,16 +211,17 @@ Filtro & Ruído & Total & Médio quadrático & Sinal Ruído & SSIM \\ \midrule
                                         & Sal e pimenta     & 84155 & 0.523 & 0.963 & 0.983 \\\midrule
 \multirow{2}{*}{Mediana}                & Gaussiano         & 84850 & 0.526 & 0.976 & 0.985 \\
                                         & Sal e pimenta    & 84832 & 0.525 & 0.947 & 0.995 \\\midrule
-\multirow{2}{*}{Difusao anisotropica}   & Gaussiano     & 170205517 & 23.538 & 29.630 & 0.913 \\
+\multirow{2}{*}{Difusão anisotrópica}   & Gaussiano     & 170205517 & 23.538 & 29.630 & 0.913 \\
                                         & Sal e pimenta & 107418886 & 18.699 & 45.079 & 0.945 \\\bottomrule
 \end{tabular}
 \caption{Medidas de erros e similaridade para as images da Figura \ref{fig:all}}
 \label{tab:results}
 \end{table}
 
-Para a difusão anisotrópica, foi realizada um \textit{grid search} variando o número de iterações, $\gamma$ e $\kappa$, os resultados do índice de similaridade estrutural para cada item foram plotados nos seguintes gráficos.
+\subsection{Difusão anisotrópica e o $\mathit{SSIM}$}
+Para a difusão anisotrópica, estudou-se como a variação dos parâmetros número de iterações, $\kappa$ e $\gamma$ afetava a imagem original, através de um \textit{grid search}. Os resultados do índice de similaridade estrutural para cada item foram plotados nos gráficos da Figura \ref{fig:simm_aniso}. Podemos ver como o número de iterações claramente borra a imagem, já que o $\mathit{SSIM}$ decresce conforme aumentamos o número de iterações. O mesmo pode ser dito para $\gamma$. Aumentar $\kappa$, por outro lado, tem o efeito inverso - a imagem produzida é mais parecida com a original, o que pode ser constatado com o maior valor de $\mathit{SSIM}$.
 
-\begin{figure}
+\begin{figure}[!htb]
 \begin{subfigure}[ht]{0.45\columnwidth}
 \begin{tikzpicture}
     \begin{axis}[xlabel=Iterações, ylabel=SSIM]
@@ -272,7 +283,6 @@ Para a difusão anisotrópica, foi realizada um \textit{grid search} variando o 
 \end{figure}
 
 \begin{thebibliography}{99}
-    \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
     \bibitem{article} WANG, Z.; BOVIK, Alan C.;SHEIKH, Hamid R.; SIMONCELLI, Eero P.; \textbf{Image Quality Assessment: From error visibility to structural similarity}. IEEE Transactions on Image Processing, vol. 13, no. 4, 2004.
 \end{thebibliography}
 
