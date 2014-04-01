@@ -10,6 +10,8 @@
 \usepackage{subcaption}
 \usepackage{amsmath}
 \usepackage{verbatim}
+\usepackage{booktabs}
+\usepackage{multirow}
 
 \makeatletter
 \let\@institution\empty
@@ -82,10 +84,12 @@ A relação sinal ruído pode ser definida como:
 \end{equation}
 
 \subsection{Critérios de qualidade}
-Para imagens cuja a finalidade é a observação pelo olho humano, o único método correto de avaliar a qualidade da imagem é a avaliação subjetiva \cite{article}, contudo, o método de índice de similaridade estrutural(SSIM), se propõem à de forma objetiva conseguir resproduzir os resultados subjetivos. O SSIM pode ser definido como:
+Para imagens cuja finalidade é a observação pelo olho humano, o único método correto de avaliar a qualidade da imagem é a avaliação subjetiva \cite{article}. No campo de processamento de imagens, é comum a aplicação de filtros a fim de realçar ou isolar uma determinada característica. Tais filtros, contudo, podem interferir em elementos não desejados da imagem.
+
+Procedimentos manuais para a verificação da qualidade dos filtros aplicados seriam longos e tediosos. Portanto, faz-se necessaŕia uma forma objetiva de se mensurar a similaridade entre duas imagens, original e filtrada. O método de índice de similaridade estrutural(SSIM), se propõe a, de forma objetiva, conseguir reproduzir os resultados subjetivos. O SSIM é um índice que mede a similaridade entre duas imagens e pode ser definido como:
 
 \begin{equation}
-    SSIM(X,Y) = [l(x,y)]^{\alpha} \cdot [c(x,y)]^{\beta} \cdot [s(x,y)]^{\gamma}
+    \mathit{SSIM}(X,Y) = [l(x,y)]^{\alpha} \cdot [c(x,y)]^{\beta} \cdot [s(x,y)]^{\gamma}
     \label{eq:ssim_trash}
 \end{equation}
 
@@ -99,27 +103,27 @@ Para comparação de luminância, devemos utilizar uma função que seja simétr
     \label{eq:lum}
 \end{equation}
 
-Onde, $\mu_x, \mu_y$ são as médias dos pixels nos eixos e $C_1$ é uma constante para evitar instabilidades quando $\mu_x^2 + \mu_y^2$ se aproxima de $0$.
+Onde, $\mu_x, \mu_y$ são as médias dos pixels nos eixos e $C_1 = (K_1L)^2$, com $K_1 \ll 1$, é uma constante para evitar instabilidades quando $\mu_x^2 + \mu_y^2$ se aproxima de $0$.
 
 \subsubsection*{Comparação da contraste}
 A função de comparação de contraste é análoga à comparação de luminância. A função usada é dada por:
 
 \begin{equation}
-    l(x,y) = \frac{2 \sigma_x \sigma_y + C_2}{\sigma_x^2 + \sigma_y^2 + C_2}
+    c(x,y) = \frac{2 \sigma_x \sigma_y + C_2}{\sigma_x^2 + \sigma_y^2 + C_2}
     \label{eq:cont}
 \end{equation}
 
-Onde, $\sigma_x, \sigma_y$ é o desvio padrão dos valores dos pixels nos eixos.
+Onde, $\sigma_x, \sigma_y$ é o desvio padrão dos valores dos pixels nos eixos. A constante $C_2 = (K_2L)^2$, $K_2 \ll 1$ tem a mesma função de $C_1$.
 
-\subsubsection*{Comparação da estruturas}
+\subsubsection*{Experimentos}
 A função usada na comparação de estruturas é dada por:
 
 \begin{equation}
-    l(x,y) = \frac{2 \sigma_{xy} + C_3}{\sigma_x \sigma_y + C_3}
+    s(x,y) = \frac{2 \sigma_{xy} + C_3}{\sigma_x \sigma_y + C_3}
     \label{eq:estru}
 \end{equation}
 
-Onde $\sigma_{xy}$ é definida como:
+$C_3$ tem a mesma forma e função de $C_1$ e $C_2$. $\sigma_{xy}$ é definida como:
 
 \begin{equation}
     \sigma_{xy} = \frac{1}{N - 1} \sum_{i = 1}^{N}(x_i - \mu_x)(y_i - \mu_y )
@@ -127,55 +131,145 @@ Onde $\sigma_{xy}$ é definida como:
 \end{equation}
 
 \subsubsection*{Implementação utilizada}
-Do trabalho \cite{article}, vamos definir os expoentes como sendo $\alpha = \beta = \gamma = 1$. Tendo assim a função SSIM como sendo:
+Do trabalho \cite{article}, vamos definir os expoentes como sendo $\alpha = \beta = \gamma = 1$ e as constantes $C_3 = C_2/2$. Tendo assim a função SSIM como sendo:
 
 \begin{equation}
-    SSIM(X,Y) = \frac{(2 \mu_x \mu_y + C_1) (2 \sigma_{xy} + C_2)}{(\mu_x^2 + \mu_y^2 + C_1)(\sigma_x^2 + \sigma_y^2 + C_2)}
+    \mathit{SSIM}(X,Y) = \frac{(2 \mu_x \mu_y + C_1) (2 \sigma_{xy} + C_2)}{(\mu_x^2 + \mu_y^2 + C_1)(\sigma_x^2 + \sigma_y^2 + C_2)}
     \label{eq:ssim}
 \end{equation}
 
-\subsection{Comparação entre imagens filtradas}
+\section{Experimentos}
 Foram aplicados os ruídos, gaussiano e sal e pimenta em uma imagem e em seguida, foram aplicados os filtros gaussiano, da mediana e difusão anisotrópica.
-Com os resultados das filtragens, foram calculados os erros total, médio quadrático, relação sinal ruído e o índice de similaridade estrutural \cite{article}. Com os resultados a seguir:
+Com os resultados das filtragens, foram calculados os erros total, médio quadrático, relação sinal ruído e o índice de similaridade estrutural \cite{article}. As imagens podem ser vistas na Figura \ref{fig:all} e os resultados estão expressos na Tabela \ref{tab:results}
+\begin{figure}[!ht]
+    \centering
+        \includegraphics[width=0.45\textwidth]{src.jpg}
+        \caption{Figura original}
+        \label{fig:src}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{sp.jpg}
+        \caption{Com ruído \textit{salt and pepper}}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{sp_median.jpg}
+        \caption{Filtro da mediana em ruído \textit{salt and pepper}}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{sp_gaussian.jpg}
+        \caption{Filtro da Gaussiana em \textit{salt and pepper}}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{sp_aniso.jpg}
+        \caption{Difusão anisotrópica em \textit{salt and pepper}}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{ga.jpg}
+        \caption{Com ruído Gaussiano}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{ga_median.jpg}
+        \caption{Filtro da mediana em ruído Gaussiano}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{ga_gaussian.jpg}
+        \caption{Filtro da Gaussiana em ruído Gaussiano}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{ga_aniso.jpg}
+        \caption{Difusão anisotrópica em ruído gaussiano}
+    \end{subfigure}
+    \caption{Imagens com ruídos e com filtros aplicados}
+    \label{fig:all}
+\end{figure}
 
 \begin{table}[!ht]
-\begin{tabular}{|c|c|c|c|c|}
-\hline
- & Total & Médio quadrático & Sinal Ruído & SSIM \\ \hline
- Filtro gaussiano sobre ruído gaussiano         &  &  &  &  \\ \hline
- Filtro gaussiano sobre ruído sal e pimenta     &  &  &  &  \\ \hline
- Filtro da mediana sobre ruído gaussiano        &  &  &  &  \\ \hline
- Filtro da mediana sobre ruído sal e pimenta    &  &  &  &  \\ \hline
- Difusão anisotrópica sobre ruído gaussiano     &  &  &  &  \\ \hline
- Difusão anisotrópica sobre ruído sal e pimenta &  &  &  &  \\ \hline
+\begin{tabular}{cccccc}
+\toprule
+Filtro & Ruído & Total & Médio quadrático & Sinal Ruído & SSIM \\ \midrule
+\multirow{2}{*}{Gaussiano}              & Gaussiano         & 78489 & 0.505 & 1.019 & 0.967 \\
+                                        & Sal e pimenta     & 84155 & 0.523 & 0.963 & 0.983 \\\midrule
+\multirow{2}{*}{Mediana}                & Gaussiano         & 84850 & 0.526 & 0.976 & 0.985 \\
+                                        & Sal e pimenta    & 84832 & 0.525 & 0.947 & 0.995 \\\midrule
+\multirow{2}{*}{Difusao anisotropica}   & Gaussiano     & 170205517 & 23.538 & 29.630 & 0.913 \\
+                                        & Sal e pimenta & 107418886 & 18.699 & 45.079 & 0.945 \\\bottomrule
 \end{tabular}
+\caption{Medidas de erros e similaridade para as images da Figura \ref{fig:all}}
+\label{tab:results}
 \end{table}
 
-Para a difusão anisotrópica, foi realizada um \textit{grid search} variando o número de iterações, \textit{gamma} e o \textit{kappa}, os resultados do índice de similaridade estrutural para cada item foram plotados nos seguintes gráficos.
+Para a difusão anisotrópica, foi realizada um \textit{grid search} variando o número de iterações, $\gamma$ e $\kappa$, os resultados do índice de similaridade estrutural para cada item foram plotados nos seguintes gráficos.
 
-\begin{center}
+\begin{figure}
+\begin{subfigure}[ht]{0.45\columnwidth}
 \begin{tikzpicture}
     \begin{axis}[xlabel=Iterações, ylabel=SSIM]
-    \addplot coordinates {};
+    \addplot coordinates {
+( 1 , 0.915177942542 )
+( 51 , 0.886941784946 )
+( 101 , 0.866595195783 )
+( 151 , 0.851691418409 )
+( 201 , 0.83953047326 )
+( 251 , 0.8293627615 )
+( 301 , 0.820514897407 )
+( 351 , 0.812721788225 )
+( 401 , 0.805870831974 )
+( 451 , 0.79974339225 )};
     \end{axis}
 \end{tikzpicture}
-\end{center}
-
-\begin{center}
+\caption{Variação do número de interações}
+\end{subfigure}
+\qquad
+\begin{subfigure}[ht]{0.45\columnwidth}
 \begin{tikzpicture}
-    \begin{axis}[xlabel=Kappa, ylabel=SSIM]
-    \addplot coordinates {};
+    \begin{axis}[xlabel=$\kappa$, ylabel=SSIM]
+    \addplot coordinates {
+( 1 , 0.909192998739 )
+( 51 , 0.912909821173 )
+( 101 , 0.911403807952 )
+( 151 , 0.9599412168 )
+( 201 , 0.965680017742 )
+( 251 , 0.966272814367 )
+( 301 , 0.966464712277 )
+( 351 , 0.966560333193 )
+( 401 , 0.966614383602 )
+( 451 , 0.966649017241 )};
     \end{axis}
 \end{tikzpicture}
-\end{center}
-
-\begin{center}
+\caption{Variação de $\kappa$.}
+\end{subfigure}
+\\
+\begin{subfigure}[ht]{0.45\columnwidth}
 \begin{tikzpicture}
-    \begin{axis}[xlabel=Gamma, ylabel=SSIM]
-    \addplot coordinates {};
+    \begin{axis}[xlabel=$\gamma$, ylabel=SSIM]
+    \addplot coordinates {
+( 0.002 , 0.91067806574 )
+( 0.102 , 0.912886329381 )
+( 0.202 , 0.904948974613 )
+( 0.302 , 0.892062808193 )
+( 0.402 , 0.868458974177 )
+( 0.502 , 0.85516485332 )
+( 0.602 , 0.843687861726 )
+( 0.702 , 0.834978764209 )
+( 0.802 , 0.824419203523 )
+( 0.902 , 0.810539185831 )};
     \end{axis}
 \end{tikzpicture}
-\end{center}
+\caption{Variação de $\gamma$}
+\end{subfigure}
+\caption{Variação do SSIM de acordo com alterações nos parâmetros da difusão anisotrópica.}
+\label{fig:simm_aniso}
+\end{figure}
 
 \begin{thebibliography}{99}
     \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.

@@ -1,27 +1,43 @@
 import numpy as np
 import cv2
 import sys
+import math
 
-def total_error(src, filtered):
-    error = 0
-    for i in range(src.shape[0]):
-        for j in range(src.shape[1]):
-            print error
-            error = error + (src[i][j] - filtered[i][j]) * (src[i][j] - filtered[i][j])
-    return error
+def total_error(x, y):
+    return sum(sum((x-y)**2))
 
-def rms_error(src, filtered):
-    return np.sqrt(total_error(src, filtered) / float(src.shape[0] * src.shape[1]))
+def rms_error(x, y):
+    return math.sqrt(total_error(x, y) / float(x.shape[0] * y.shape[1]))
 
-def snr_error(src, filtered):
-    sum = 0
-    for i in range(src.shape[0]):
-        for j in range(src.shape[1]):
-            sum = sum + (filtered * filtered)
-    return float(sum) / total_error(src, filtered)
+def snr_error(x, y):
+    denominator = sum(sum(y**2))
+    return float(denominator) / total_error(x, y)
 
-def ssim_error(src, filtered):
+def ssim_error(src, filtered, alpha=1, beta=1, gamma=1, c1=0, c2=0, c3=0):
+    return pow(luminance(src, filtered, c1), alpha) * pow(contrast(src, filtered, c2), beta) * pow(structure(src, filtered, c3), gamma)
     return 0
+
+def luminance(x, y, c=0):
+    mu_x = x.mean()
+    mu_y = y.mean()
+    return (2 * mu_x * mu_y + c) / (pow(mu_x, 2) + pow(mu_y, 2) + c)
+
+def contrast(x, y, c=0):
+    sigma_x = x.std(ddof=1)
+    sigma_y = y.std(ddof=1)
+    return (2 * sigma_x * sigma_y + c) / (pow(sigma_x, 2) + pow(sigma_y, 2) + c)
+
+def structure(x, y, c=0):
+    mu_x = x.mean()
+    mu_y = y.mean()
+    sigma_x = x.std(ddof=1)
+    sigma_y = y.std(ddof=1)
+    sigma_xy = 0.0
+    for i in range(x.shape[0]):
+        for j in range(x.shape[1]):
+            sigma_xy += (x[i][j] - mu_x)*(y[i][j] - mu_y)
+    sigma_xy /= (x.shape[0] * x.shape[1] - 1)
+    return (sigma_xy + c) / (sigma_x * sigma_y + c)
 
 def aniso_diff(img,niter=10,kappa=50,gamma=0.1,step=(1.,1.)):
     img = img.astype('float32')
@@ -75,37 +91,52 @@ def gaussian_noise(src, a, b):
 src = cv2.imread(sys.argv[1])
 src = cv2.cvtColor(src, cv2.cv.CV_BGR2GRAY)
 
-image_sp = salt_and_pepper_noise(src, 135, 17)
-image_sp_noise_median_filter = cv2.medianBlur(image_sp, 3)
-image_sp_noise_gaussian_filter = cv2.GaussianBlur(image_sp, ksize=(3,3), sigma1=135)
-image_sp_noise_aniso_diff = aniso_diff(image_sp)
+sp = salt_and_pepper_noise(src, 135, 17)
+sp_median = cv2.medianBlur(sp, 3)
+sp_gaussian = cv2.GaussianBlur(sp, ksize=(3,3), sigmaX=135)
+sp_aniso = aniso_diff(sp)
 
-image_ga = gaussian_noise(src, 2, 10)
-image_ga_noise_median_filter = cv2.medianBlur(image_ga, 3)
-image_ga_noise_gaussian_filter = cv2.GaussianBlur(image_ga, ksize=(3,3), sigma1=135)
-image_ga_noise_aniso_diff = aniso_diff(image_ga)
+ga = gaussian_noise(src, 2, 10)
+ga_median = cv2.medianBlur(ga, 3)
+ga_gaussian = cv2.GaussianBlur(ga, ksize=(3,3), sigmaX=135)
+ga_aniso = aniso_diff(ga)
 
-print "Filtro gaussiano sobre ruido gaussiano         &", total_error(src, image_ga_noise_gaussian_filter), "&", rms_error(src, image_ga_noise_gaussian_filter), "&", snr_error(src, image_ga_noise_gaussian_filter), "&", ssim_error(src, image_ga_noise_gaussian_filter),  "\\ \hline"
-print "Filtro gaussiano sobre ruido sal e pimenta     &", total_error(src, image_sp_noise_gaussian_filter), "&", rms_error(src, image_sp_noise_gaussian_filter), "&", snr_error(src, image_sp_noise_gaussian_filter), "&", ssim_error(src, image_sp_noise_gaussian_filter),  "\\ \hline"
-print "Filtro da mediana sobre ruido gaussiano        &", total_error(src, image_ga_noise_median_filter), "&", rms_error(src, image_ga_noise_median_filter), "&", snr_error(src, image_ga_noise_median_filter), "&", ssim_error(src, image_ga_noise_median_filter),  "\\ \hline"
-print "Filtro da mediana sobre ruido sal e pimenta    &", total_error(src, image_sp_noise_median_filter), "&", rms_error(src, image_sp_noise_median_filter), "&", snr_error(src, image_sp_noise_median_filter), "&", ssim_error(src, image_sp_noise_median_filter),  "\\ \hline"
-print "Difusao anisotropica sobre ruido gaussiano     &", total_error(src, image_ga_noise_aniso_diff), "&", rms_error(src, image_ga_noise_aniso_diff), "&", snr_error(src, image_ga_noise_aniso_diff), "&", ssim_error(src, image_ga_noise_aniso_diff),  "\\ \hline"
-print "Difusao anisotropica sobre ruido sal e pimenta &", total_error(src, image_sp_noise_aniso_diff), "&", rms_error(src, image_sp_noise_aniso_diff), "&", snr_error(src, image_sp_noise_aniso_diff), "&", ssim_error(src, image_sp_noise_aniso_diff),  "\\ \hline"
+cv2.imwrite('src.jpg',src)
+cv2.imwrite('sp.jpg',sp)
+cv2.imwrite('sp_median.jpg',sp_median)
+cv2.imwrite('sp_gaussian.jpg',sp_gaussian)
+cv2.imwrite('sp_aniso.jpg',sp_aniso)
+cv2.imwrite('ga.jpg',ga)
+cv2.imwrite('ga_median.jpg',ga_median)
+cv2.imwrite('ga_gaussian.jpg',ga_gaussian)
+cv2.imwrite('ga_aniso.jpg',ga_aniso)
+
+print "Filtro gaussiano sobre ruido gaussiano         & %d & %.3f & %.3f & %.3f \\\\\hline" % (total_error(src, ga_gaussian), rms_error(src, ga_gaussian), snr_error(src, ga_gaussian), ssim_error(src, ga_gaussian))
+
+print "Filtro gaussiano sobre ruido sal e pimenta     & %d & %.3f & %.3f & %.3f \\\\\hline" % (total_error(src, sp_gaussian), rms_error(src, sp_gaussian), snr_error(src, sp_gaussian), ssim_error(src, sp_gaussian))
+
+print "Filtro da mediana sobre ruido gaussiano        & %d & %.3f & %.3f & %.3f \\\\\hline" % (total_error(src, ga_median), rms_error(src, ga_median), snr_error(src, ga_median), ssim_error(src, ga_median))
+
+print "Filtro da mediana sobre ruido sal e pimenta    & %d & %.3f & %.3f & %.3f \\\\\hline" % (total_error(src, sp_median), rms_error(src, sp_median), snr_error(src, sp_median), ssim_error(src, sp_median))
+
+print "Difusao anisotropica sobre ruido gaussiano     & %d & %.3f & %.3f & %.3f \\\\\hline" % (total_error(src, ga_aniso), rms_error(src, ga_aniso), snr_error(src, ga_aniso), ssim_error(src, ga_aniso))
+
+print "Difusao anisotropica sobre ruido sal e pimenta & %d & %.3f & %.3f & %.3f \\\\\hline" % (total_error(src, sp_aniso), rms_error(src, sp_aniso), snr_error(src, sp_aniso), ssim_error(src, sp_aniso))
 
 print "niter graph"
-for x in range(1,500):
-    filtered = aniso_diff(image_ga, niter=x)
+for x in range(1,500,50):
+    filtered = aniso_diff(ga, niter=x)
     error    = ssim_error(src, filtered)
     print "(", x, ",", error, ")"
 
 print "kappa graph"
-for x in range(1,500):
-    filtered = aniso_diff(image_ga, kappa=x)
+for x in range(1,500,50):
+    filtered = aniso_diff(ga, kappa=x)
     error    = ssim_error(src, filtered)
     print "(", x, ",", error, ")"
 
 print "gamma graph"
-for x in [z/500.0 for z in range(1, 500)]:
-    filtered = aniso_diff(image_ga, gamma=x)
+for x in [z/500.0 for z in range(1, 500,50)]:
+    filtered = aniso_diff(ga, gamma=x)
     error    = ssim_error(src, filtered)
     print "(", x, ",", error, ")"
