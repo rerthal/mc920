@@ -1,0 +1,72 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{pgfplots, pgfplotstable}
+\usepackage{ae}
+\usepackage[brazil]{babel}
+\usepackage[vmargin=2cm,hmargin=2cm,columnsep=0.75cm]{geometry}
+\usepackage{float,nonfloat}
+\usepackage{graphicx,color}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{verbatim}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+\makeatletter
+\let\@institution\empty
+\def\institution#1{\def\@institution{#1}}
+\renewcommand{\maketitle}{
+    \begin{center}
+        {\Large\bfseries\@title\par\medskip}
+        {\large
+            \begin{tabular}[t]{c}%
+                \@author
+        \end{tabular}\par\medskip}
+        {\itshape\@institution\par}
+        {\itshape\@date\par}
+\end{center}}
+\makeatother
+
+\newcommand{\pixel}{\textit{pixel} }
+\newcommand{\pixels}{\textit{pixels} }
+\newcommand{\kernel}{\textit{kernel} }
+\newcommand{\kernels}{\textit{kernels} }
+
+\begin{document}
+% ============================================================================
+
+\title{MC920: Introdução ao Processamento de Imagem Digital\\Tarefa 9}
+\author{
+    \begin{minipage}{6cm}
+        \centering
+        Martin Ichilevici de Oliveira\\
+        RA 118077
+    \end{minipage}
+    \and
+    \begin{minipage}{6cm}
+        \centering
+        Rafael Almeida Erthal Hermano\\
+        RA 121286
+    \end{minipage}
+}
+\institution{Instituto de Computação, Universidade Estadual de Campinas}
+\date{\today}
+
+\maketitle
+
+% ============================================================================
+Dada uma imagem de impressões digitais:
+\begin{itemize}
+    \item Subdividi-la em blocos $w \times w$.
+    \item Para cada bloco, calcular a frequência $f_r$ das cristas e a orientação $\theta_r$ das mesmas no bloco.
+    \item Para tanto, considere uma sobreposição dos blocos de $\frac{w}{2}\times\frac{w}{2}$.
+\end{itemize}
+
+Obs: frequência deve ser o número de cristas por bloco. A frequência é a distância euclidiana entre o ponto com maior intensidade e o centro da FT.
+
+\begin{thebibliography}{99}
+    \bibitem{article} WANG, Z.; BOVIK, Alan C.;SHEIKH, Hamid R.; SIMONCELLI, Eero P.; \textbf{Image Quality Assessment: From error visibility to structural similarity}. IEEE Transactions on Image Processing, vol. 13, no. 4, 2004.
+\end{thebibliography}
+
+\end{document}
