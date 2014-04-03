@@ -1,5 +1,6 @@
 import glob
 import numpy as np
+import cv2
 import math
 
 def slice(image, W=8):
@@ -12,22 +13,19 @@ def slice(image, W=8):
                 yield (sub_image, i, j)
 
 def max_coord(fourier):
-    max_i   = 0
-    max_j   = 0
-    max_n   = 0
+    max = (0,0,0)
     for i in range(1,len(fourier)):
         for j in range(1,len(fourier[i])):
             norm = (fourier[i][j].real * fourier[i][j].real) + (fourier[i][j].imag * fourier[i][j].imag)
-            if norm > max_n:
-                max_n = norm
-                max_i = i
-                max_j = j
-
-    return (max_i,max_j)
+            if norm > max[2]:
+                max = (i,j,norm)
+    return max
 
 fingerprints = glob.glob("Fingerprints/*.tif")
-
-for fingerprint in fingerprint:
-    for slice in slice(fingerprint):
-        coords = max_coord(np.fft.fft2(slice[0]))
-        print math.atan(coords[0] / coords[1])
+for fingerprint in fingerprints:
+    image = cv2.imread(fingerprint)
+    image = cv2.cvtColor(image, cv2.cv.CV_BGR2GRAY)
+    for region in slice(image):
+        coords = max_coord(np.fft.fft2(region[0]))
+        if coords[0] > 0:
+            print math.atan(coords[1] / coords[0]), coords[2]
