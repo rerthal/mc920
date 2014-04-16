@@ -4,6 +4,8 @@ import cv2
 import math
 import matplotlib.pyplot as plt
 
+L=256
+
 def slice(image, M=8):
     lines   = image.shape[0] / M
     columns = image.shape[1] / M
@@ -17,14 +19,13 @@ def intensity(p):
     return p.real**2 + p.imag**2
 intensity_vec = np.vectorize(intensity)
 
-def max_coord(fourier,M=8):
+def max_coord(f,M=8):
     # shift zero-frequency term to the centre of the array
-    fourier = np.fft.fftshift(fourier)
+    fourier = np.fft.fftshift(f)
     centre=(M,M)
     max = (0,0,0,0)
     for i in range(1,len(fourier)):
         for j in range(1,len(fourier[i])):
-#            norm = (fourier[i][j].real * fourier[i][j].real) + (fourier[i][j].imag * fourier[i][j].imag)
             norm = intensity(fourier[i][j])
             if norm > max[2] and (i,j) != centre:
                 dist = math.sqrt((i-centre[0])**2 + (j-centre[1])**2)
@@ -32,7 +33,6 @@ def max_coord(fourier,M=8):
     return max
 
 def remove_ring_points(fourier, r, M=8, W=1):
-    fourier = np.fft.fftshift(fourier)
     centre = (M,M)
     circle = np.ones((2*M, 2*M))
     cv2.circle(circle, centre, int(round(r)), color=0)
@@ -44,6 +44,38 @@ def remove_dc(fourier, M=8):
     aux[(centre)] = 0
     return fourier*aux
 
+def remove_percentile(fourier,t=0.05):
+    M = fourier.shape[0]/2
+    f = intensity_vec(fourier)
+    f_max = np.amax(f)
+    if f_max > 0:
+        f *= (255/f_max)
+    h = cv2.calcHist([f.astype(np.uint8)],[0],None,[256],[0,256])
+    accum = 0
+    percentile = np.ones((2*M, 2*M))
+    for i in range(L-1,-1,-1):
+        accum += h[i]
+        if accum > ((2*M)**2)*t:
+            break
+    for i in range(len(fourier)):
+        for j in range(len(fourier[i])):
+            if f[i][j] >= accum:
+                percentile[i][j] = 0
+    return percentile*fourier
+
+def get_noise_frequency_level(fourier):
+    return np.amax(intensity_vec(fourier))
+
+def HMb(fourier, npb):
+    M = fourier.shape[0]/2
+    h = np.zeros((2*M,2*M), dtype=complex)
+    f = intensity_vec(fourier)
+    for i in range(len(fourier)):
+        for j in range(len(fourier[i])):
+            if f[i][j] >= npb:
+                h[i][j] = fourier[i][j]
+    return h
+
 def band_pass_filter(fourier, f, W=1):
     return fourier
 
@@ -51,80 +83,46 @@ def gaussian_directional_filter(theta, size=5, sigma=1):
     mask = np.ones((size,size))
     return mask
 
-def remove_percentile(fourier,t=0.05):
-    f = intensity_vec(fourier)
-    m = -100000
-    for i in range(len(f)):
-        for j in range(len(f[0])):
-            if f[i][j] >= m:
-                m = f[i][j]
-                print i,j 
-    print m
-    print np.amax(f)
-    hist = np.bincount(f.astype(int).ravel(), minlength=256)
-#    hist = cv2.normalize(hist, alpha=0, beta=256, norm_type=cv2.NORM_MINMAX)
-    
-    return f
-
-def test():
-    fingerprints = glob.glob("Fingerprints/1_1.tif")
-    for fingerprint in fingerprints:
-        image = cv2.imread(fingerprint)
-        image = cv2.cvtColor(image, cv2.cv.CV_BGR2GRAY)
-        # We'll print frequency for all images
-        i = fingerprint[-5] # get image suffix
-        # but we'll print line statistics for only one line of one image
-        if fingerprint == 'Fingerprints/1_1.tif':
-            f_line = open('line.txt', 'w')
-        for region in slice(image):
-            if len(region[0]) != 16:
-                continue
-            i = str(region[1])
-            j = str(region[2])
-            if len(i) == 1:
-                i = '0' + i
-            if len(j) == 1:
-                j = '0' + j
-            # we only want to print a few regions from one image
-            #if fingerprint == 'Fingerprints/1_1.tif':
-            #    if region[2] == 16 and region[1] in [3,40,20,23,26,30]:
-            #        cv2.imwrite('region'+ j +'-'+ i +'.png', region[0])
-            fft = np.fft.fft2(region[0])
-            coords = max_coord(np.fft.fft2(region[0]))
-            d = str(coords[3] if coords[3] < 3 else 0)
-            if region[2] == 16 and region[1] == 30:
-                x = remove_ring_points(fft, float(d), M=8, W=1)
-                x = remove_dc(x,M=8)
-                x = remove_percentile(x)
-                return x
-
 if __name__ == '__main__':
-    fingerprints = glob.glob("Fingerprints/1_1.tif")
+    fingerprints = glob.glob("Fingerprints/*.tif")
     for fingerprint in fingerprints:
+        print fingerprint
         image = cv2.imread(fingerprint)
         image = cv2.cvtColor(image, cv2.cv.CV_BGR2GRAY)
-        # We'll print frequency for all images
-        i = fingerprint[-5] # get image suffix
-        # but we'll print line statistics for only one line of one image
-        if fingerprint == 'Fingerprints/1_1.tif':
-            f_line = open('line.txt', 'w')
+        lines = {}
         for region in slice(image):
             if len(region[0]) != 16:
                 continue
-            i = str(region[1])
-            j = str(region[2])
-            if len(i) == 1:
-                i = '0' + i
-            if len(j) == 1:
-                j = '0' + j
-            # we only want to print a few regions from one image
-            #if fingerprint == 'Fingerprints/1_1.tif':
-            #    if region[2] == 16 and region[1] in [3,40,20,23,26,30]:
-            #        cv2.imwrite('region'+ j +'-'+ i +'.png', region[0])
+            i, j = region[1:3]
+            i_str = str(i)
+            j_str = str(j)
+            if len(i_str) == 1:
+                i_str = '0' + i_str
+            if len(j_str) == 1:
+                j_str = '0' + j_str
             fft = np.fft.fft2(region[0])
             coords = max_coord(np.fft.fft2(region[0]))
-            d = str(coords[3] if coords[3] < 3 else 0)
-            if region[2] == 16 and region[1] == 30:
-                x = remove_ring_points(fft, float(d), M=8, W=1)
-                x = remove_dc(x,M=8)
-                x = remove_percentile(x)
+            d = str(coords[3] if coords[3] <= 3 else 0)
+            if j%2 == 0 and i%2 == 0:
+                fft = np.fft.fftshift(fft)
+                f = remove_ring_points(fft, float(d), M=8, W=1)
+                f = remove_dc(f,M=8)
+                f = remove_percentile(f)
+                npb = get_noise_frequency_level(f)
+                fft = np.fft.fftshift(fft)
+                h = HMb(fft, npb)
+                h = np.fft.ifft2(h)
+                h = intensity_vec(h)
+                h *= 255/(np.amax(h))
+                h = h.astype(np.uint8)
+                # first column
+                if i == 2:
+                    lines[j] = h
+                else:
+                    lines[j] = np.concatenate((lines[j], h), axis=1)
+        for key in sorted(lines.keys()):
+            if key == 2:
+                img = lines[key]
+            else:
+                img = np.concatenate((img,lines[key]))
+        cv2.imwrite(fingerprint[:-4] + '_intermediate.jpg', img)

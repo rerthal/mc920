@@ -3,3 +3,9 @@
 .dropbox
 *.pyc
 *.swp
+*.nav
+*.out
+*.snm
+*~
+*toc
+*vrb
