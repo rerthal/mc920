@@ -6,6 +6,23 @@ import matplotlib.pyplot as plt
 
 L=256
 
+def convolution(src, h, a=1, b=1):
+    g = np.zeros(src.shape, dtype=complex)
+    f = src
+    for x in range(a,src.shape[0]-a):
+        for y in range(b,src.shape[1]-b):
+            for i in range(-a,a+1):
+                for j in range(-b,b+1):
+                    g[x][y] += h[i+1][j+1] * f[x-i][y-j]
+    return g
+
+def truncate(src):
+    for i in range(len(src)):
+        for j in range(len(src[i])):
+            src[i][j] = min(src[i][j], 255)
+            src[i][j] = max(src[i][j], 0)
+    return src
+
 def slice(image, M=8):
     lines   = image.shape[0] / M
     columns = image.shape[1] / M
@@ -89,7 +106,8 @@ if __name__ == '__main__':
         print fingerprint
         image = cv2.imread(fingerprint)
         image = cv2.cvtColor(image, cv2.cv.CV_BGR2GRAY)
-        lines = {}
+        lines_intermediate = {}
+        lines_final = {}
         for region in slice(image):
             if len(region[0]) != 16:
                 continue
@@ -103,6 +121,10 @@ if __name__ == '__main__':
             fft = np.fft.fft2(region[0])
             coords = max_coord(np.fft.fft2(region[0]))
             d = str(coords[3] if coords[3] <= 3 else 0)
+            if coords[0] != 0:
+                theta = math.degrees(math.atan(coords[1]/coords[0]))
+            else:
+                theta = 180
             if j%2 == 0 and i%2 == 0:
                 fft = np.fft.fftshift(fft)
                 f = remove_ring_points(fft, float(d), M=8, W=1)
@@ -110,19 +132,29 @@ if __name__ == '__main__':
                 f = remove_percentile(f)
                 npb = get_noise_frequency_level(f)
                 fft = np.fft.fftshift(fft)
-                h = HMb(fft, npb)
-                h = np.fft.ifft2(h)
-                h = intensity_vec(h)
-                h *= 255/(np.amax(h))
-                h = h.astype(np.uint8)
+                hmb = HMb(fft, npb)
+                hmb = np.fft.ifft2(hmb)
+                hmb_intensity = intensity_vec(hmb)
+                hmb_intensity *= 255/(np.amax(hmb_intensity))
+                hmb_intensity = hmb_intensity.astype(np.uint8)
+                hbb = band_pass_filter(fft, d)
+                gtheta = gaussian_directional_filter(theta)
+                hghb = convolution(hmb * hbb, gtheta)
+                hghb_intensity = intensity_vec(hghb)
+                hghb_intensity = truncate(hghb_intensity)
                 # first column
                 if i == 2:
-                    lines[j] = h
+                    lines_intermediate[j] = hmb_intensity
+                    lines_final[j] = hghb_intensity
                 else:
-                    lines[j] = np.concatenate((lines[j], h), axis=1)
-        for key in sorted(lines.keys()):
+                    lines_intermediate[j] = np.concatenate((lines_intermediate[j], hmb_intensity), axis=1)
+                    lines_final[j] = np.concatenate((lines_final[j], hghb_intensity), axis=1)
+        for key in sorted(lines_intermediate.keys()):
             if key == 2:
-                img = lines[key]
+                img_intermediate = lines_intermediate[key]
+                img_final = lines_final[key]
             else:
-                img = np.concatenate((img,lines[key]))
-        cv2.imwrite(fingerprint[:-4] + '_intermediate.jpg', img)
+                img_intermediate = np.concatenate((img_intermediate,lines_intermediate[key]))
+                img_final = np.concatenate((img_final,lines_final[key]))
+        cv2.imwrite(fingerprint[:-4] + '_intermediate.jpg', img_intermediate)
+        cv2.imwrite(fingerprint[:-4] + '_final.jpg', img_final)
