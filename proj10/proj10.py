@@ -7,14 +7,7 @@ import matplotlib.pyplot as plt
 L=256
 
 def convolution(src, h, a=1, b=1):
-    g = np.zeros(src.shape, dtype=complex)
-    f = src
-    for x in range(a,src.shape[0]-a):
-        for y in range(b,src.shape[1]-b):
-            for i in range(-a,a+1):
-                for j in range(-b,b+1):
-                    g[x][y] += h[i+1][j+1] * f[x-i][y-j]
-    return g
+    return cv2.filter2D(src, -1, h)
 
 def truncate(src):
     for i in range(len(src)):
@@ -93,12 +86,23 @@ def HMb(fourier, npb):
                 h[i][j] = fourier[i][j]
     return h
 
-def band_pass_filter(fourier, Dl, Dh):
+# Retorna o quadrado da distancia entre p1 e p2
+def dist2_pt(p1, p2):
+    return float((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+
+def band_pass_filter(fourier, f):
+    M = fourier.shape[0]/2
+    BW = fourier.shape[0]/16
+    centre = (M, M)
     result = np.ones(fourier.shape)
+    f = int(float(f))
+    if f == 0:
+        return result
     for i in range(len(fourier)):
         for j in range(len(fourier[i])):
-            Hlp = math.exp(-(intensity(fourier[i][j])) / (2 * Dl * Dl))
-            Hhp = 1 - math.exp(-(intensity(fourier[i][j])) / (2 * Dh * Dh))
+            d = dist2_pt((i,j), centre)
+            Hlp = math.exp((-1/2.0)*(d)/((f+BW)**2))
+            Hhp = 1 - Hlp
             result[i][j] = Hlp * Hhp
     return result
 
@@ -112,6 +116,7 @@ mask135 = [[1, 1, 0, 0, 0], [1, 1, 1, 0, 0], [0, 1, 1, 1, 0], [0, 0, 1, 1, 1], [
 mask157 = [[1, 0, 0, 0, 0], [1, 1, 1, 1, 0], [1, 1, 1, 1, 1], [0, 1, 1, 1, 1], [0, 0, 0, 0, 1]]
 
 def gaussian_directional_filter(theta, size=5, sigma=1):
+    theta = (theta+180)/2
     mask = np.ones((size,size))
     for i in range(-size/2 + 1, size/2 + 1):
         for j in range(-size/2 + 1, size/2 + 1):
@@ -165,17 +170,33 @@ if __name__ == '__main__':
                 f = remove_percentile(f)
                 npb = get_noise_frequency_level(f)
                 fft = np.fft.fftshift(fft)
+                # Fase 1
                 hmb = HMb(fft, npb)
                 hmb = np.fft.ifft2(hmb)
                 hmb_intensity = intensity_vec(hmb)
                 hmb_intensity *= 255/(np.amax(hmb_intensity))
                 hmb_intensity = hmb_intensity.astype(np.uint8)
-                hbb = band_pass_filter(fft, 100, 50)
+                # Fase 2
+                fft = np.fft.fftshift(fft)
+                hbb = band_pass_filter(fft, d)
                 gtheta = gaussian_directional_filter(theta)
-                hghb = convolution(hmb * hbb, gtheta)
-                #hghb = np.fft.ifft2(hghb)
+                #hghb = convolution(np.fft.fft2(hmb)* hbb, gtheta)
+                hghb = np.fft.fft2(hmb)*hbb
+                hghb = np.fft.ifft2(hghb)
                 hghb_intensity = intensity_vec(hghb)
-                hghb_intensity = truncate(hghb_intensity)
+                hghb_intensity = convolution(hghb_intensity, gtheta)
+                hghb_intensity *= 255/(np.amax(hghb_intensity))
+                #hghb_intensity = truncate(hghb_intensity)
+                hghb_intensity = hghb_intensity.astype(np.uint8)
+                '''
+                if hbb[0][0] != 1 and i==14 and j==10:
+                    print 'hmb'
+                    plt.imshow(intensity_vec(hmb))
+                    plt.show()
+                    print 'hghb'
+                    plt.imshow(intensity_vec(hghb))
+                    plt.show()
+                '''
                 # first column
                 if i == 2:
                     lines_intermediate[j] = hmb_intensity
