@@ -93,12 +93,45 @@ def HMb(fourier, npb):
                 h[i][j] = fourier[i][j]
     return h
 
-def band_pass_filter(fourier, f, W=1):
-    return fourier
+def band_pass_filter(fourier, Dl, Dh):
+    result = np.ones(fourier.shape)
+    for i in range(len(fourier)):
+        for j in range(len(fourier[i])):
+            Hlp = math.exp(-(intensity(fourier[i][j])) / (2 * Dl * Dl))
+            Hhp = 1 - math.exp(-(intensity(fourier[i][j])) / (2 * Dh * Dh))
+            result[i][j] = Hlp * Hhp
+    return result
+
+mask0O0 = [[0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0]]
+mask022 = [[0, 0, 0, 0, 1], [0, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 0], [1, 0, 0, 0, 0]]
+mask045 = [[0, 0, 0, 1, 1], [0, 0, 1, 1, 1], [0, 1, 1, 1, 0], [1, 1, 1, 0, 0], [1, 1, 0, 0, 0]]
+mask067 = [[0, 0, 1, 1, 1], [0, 1, 1, 1, 0], [0, 1, 1, 1, 0], [0, 1, 1, 1, 0], [1, 1, 1, 0, 0]]
+mask090 = [[0, 1, 1, 1, 0], [0, 1, 1, 1, 0], [0, 1, 1, 1, 0], [0, 1, 1, 1, 0], [0, 1, 1, 1, 0]]
+mask112 = [[1, 1, 1, 0, 0], [0, 1, 1, 1, 0], [0, 1, 1, 1, 0], [0, 1, 1, 1, 0], [0, 0, 1, 1, 1]]
+mask135 = [[1, 1, 0, 0, 0], [1, 1, 1, 0, 0], [0, 1, 1, 1, 0], [0, 0, 1, 1, 1], [0, 0, 0, 1, 1]]
+mask157 = [[1, 0, 0, 0, 0], [1, 1, 1, 1, 0], [1, 1, 1, 1, 1], [0, 1, 1, 1, 1], [0, 0, 0, 0, 1]]
 
 def gaussian_directional_filter(theta, size=5, sigma=1):
     mask = np.ones((size,size))
-    return mask
+    for i in range(-size/2 + 1, size/2 + 1):
+        for j in range(-size/2 + 1, size/2 + 1):
+            mask[i][j] = math.exp(-(i * i + j * j) / (2 * sigma * sigma)) / (2 * math.pi * sigma * sigma)
+    if theta < 15:
+        return mask * mask0O0
+    elif theta < 37:
+        return mask * mask022
+    elif theta < 59:
+        return mask * mask045
+    elif theta < 81:
+        return mask * mask067
+    elif theta < 103:
+        return mask * mask090
+    elif theta < 125:
+        return mask * mask112
+    elif theta < 147:
+        return mask * mask135
+    else:
+        return mask * mask157
 
 if __name__ == '__main__':
     fingerprints = glob.glob("Fingerprints/*.tif")
@@ -137,9 +170,10 @@ if __name__ == '__main__':
                 hmb_intensity = intensity_vec(hmb)
                 hmb_intensity *= 255/(np.amax(hmb_intensity))
                 hmb_intensity = hmb_intensity.astype(np.uint8)
-                hbb = band_pass_filter(fft, d)
+                hbb = band_pass_filter(fft, 100, 50)
                 gtheta = gaussian_directional_filter(theta)
                 hghb = convolution(hmb * hbb, gtheta)
+                #hghb = np.fft.ifft2(hghb)
                 hghb_intensity = intensity_vec(hghb)
                 hghb_intensity = truncate(hghb_intensity)
                 # first column
