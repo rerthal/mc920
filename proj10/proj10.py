@@ -102,7 +102,7 @@ def band_pass_filter(fourier, f):
         for j in range(len(fourier[i])):
             d = dist2_pt((i,j), centre)
             Hlp = math.exp((-1/2.0)*(d)/((f+BW)**2))
-            Hhp = 1 - Hlp
+            Hhp = 1 - math.exp((-1/2.0)*(d)/((f)**2))
             result[i][j] = Hlp * Hhp
     return result
 
