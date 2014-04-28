@@ -1,0 +1,182 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{pgfplots, pgfplotstable}
+\usepackage{ae}
+\usepackage[brazil]{babel}
+\usepackage[vmargin=2cm,hmargin=2cm,columnsep=0.75cm]{geometry}
+\usepackage{float,nonfloat}
+\usepackage{graphicx,color}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{verbatim}
+
+\makeatletter
+\let\@institution\empty
+\def\institution#1{\def\@institution{#1}}
+\renewcommand{\maketitle}{
+    \begin{center}
+        {\Large\bfseries\@title\par\medskip}
+        {\large
+            \begin{tabular}[t]{c}%
+                \@author
+        \end{tabular}\par\medskip}
+        {\itshape\@institution\par}
+        {\itshape\@date\par}
+\end{center}}
+\makeatother
+
+\newcommand{\pixel}{\textit{pixel} }
+\newcommand{\pixels}{\textit{pixels} }
+\newcommand{\kernel}{\textit{kernel} }
+\newcommand{\kernels}{\textit{kernels} }
+
+\begin{document}
+% ============================================================================
+
+\title{MC920: Introdução ao Processamento de Imagem Digital\\Tarefa 11}
+\author{
+    \begin{minipage}{6cm}
+        \centering
+        Martin Ichilevici de Oliveira\\
+        RA 118077
+    \end{minipage}
+    \and
+    \begin{minipage}{6cm}
+        \centering
+        Rafael Almeida Erthal Hermano\\
+        RA 121286
+    \end{minipage}
+}
+\institution{Instituto de Computação, Universidade Estadual de Campinas}
+\date{\today}
+
+\maketitle
+
+\section{Operações Básicas}
+
+\subsection{Dilatação}
+A dilatação tem como principal função expandir as fronteiras da região de foreground dos pixels da imagem, sendo assim, a área das regiões de foreground aumentam, enquanto buracos nessas regiões diminuem. A dilatação de uma imagem $X$ por um dado elemento estruturante $B$ é dada por:
+
+\begin{equation}
+    \delta_B(x) = max\{x_k, k \in B\}
+\end{equation}
+
+Portanto, em imagens binárias, se na janela do elemento estruturante existir pelo menos um elemento de foreground, o ponto será conseiderado de foreground.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{src.jpg}
+        \caption{Imagem original}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{dilation.jpg}
+        \caption{Imagem dilatada}
+    \end{subfigure}
+    \label{fig:dilation}
+\end{figure}
+
+\subsection{Erosão}
+A erosão tem como principal função diminuir as fronteiras da região de foreground dos pixels da imagem, sendo assim, a área das regiões de foreground diminuem, enquanto buracos nessas regiões aumentam. A erosão de uma imagem $X$ por um dado elemento estruturante $B$ é dada por:
+
+\begin{equation}
+    \in_B(x) = min\{x_k, k \in B\}
+\end{equation}
+
+Portanto, em imagens binárias, se na janela do elemento estruturante existir pelo menos um elemento de background, o ponto será conseiderado de background.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{src.jpg}
+        \caption{Imagem original}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{erosion.jpg}
+        \caption{Imagem erodida}
+    \end{subfigure}
+    \label{fig:erosion}
+\end{figure}
+
+\subsection{Abertura}
+A abertura tende a remover pixels de foreground em regiões de ponta de foreground. A abertura pode ser definida como a composição de uma dilatação com uma erosão:
+
+\begin{equation}
+    \gamma_B = \delta_B \circ \in_B
+\end{equation}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{src.jpg}
+        \caption{Imagem original}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{opening.jpg}
+        \caption{Imagem aberta}
+    \end{subfigure}
+    \label{fig:opening}
+\end{figure}
+
+\subsection{Fechamento}
+O fechamento tende a remover pixels de background em regiões de ponta de background. O fechamento pode ser definido como a composição de uma erosão com uma dilatação:
+
+\begin{equation}
+    \varphi_B = \in_B \circ \delta_B
+\end{equation}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{src.jpg}
+        \caption{Imagem original}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{closing.jpg}
+        \caption{Imagem fechada}
+    \end{subfigure}
+    \label{fig:closing}
+\end{figure}
+
+\section{Dualidade}
+A erosão não é o inverso da dilatação, somente em alguns casos de
+erosão isso ocorre. Erosão e dilatação são duais no seguinte sentido:
+
+\begin{equation}
+    (\delta_{f,B})^{C} = \in_{f^{C},B^{C}}
+\end{equation}
+
+Isso significa que o complemento de uma erosão é o mesmo que uma dilatação do complemento da imagem pelo elemento estrutural refletido.
+
+\section{Transformações tudo ou nada}
+As transformações tudo ou nada varrem a imagem $X$ com um elemento estruturante $B$, se o elemento estruturante for igual à mascara na região da imagem, na posição do centro do elemento estruturante é colocado uma cor de foreground, caso contrário, é colocada a cor de background.
+
+\subsection{Detecção de cantos}
+Utilizando os seguintes 4 elementos estruturantes:
+
+\begin{table}[h]
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\cline{1-3} \cline{5-7} \cline{9-11} \cline{13-15}
+  & 1 &   &  &   & 1 &   &  & 0 & 0 &   &  &   & 0 & 0 \\ \cline{1-3} \cline{5-7} \cline{9-11} \cline{13-15}
+1 & 1 & 0 &  & 0 & 1 & 1 &  & 0 & 1 & 1 &  & 1 & 1 &   \\ \cline{1-3} \cline{5-7} \cline{9-11} \cline{13-15}
+  & 0 & 0 &  & 0 & 0 &   &  &   & 1 &   &  &   & 1 &   \\ \cline{1-3} \cline{5-7} \cline{9-11} \cline{13-15}
+\end{tabular}
+\end{table}
+
+Aplicando um OR com todas as transformações, obtemos todos os cantos da imagem.
+
+\section{Imagens coloridas}
+
+% ============================================================================
+
+
+\begin{thebibliography}{99}
+    \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
+    \bibitem{site} http://homepages.inf.ed.ac.uk/rbf/HIPR2/morops.htm.
+\end{thebibliography}
+\end{document}
