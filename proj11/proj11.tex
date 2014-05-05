@@ -102,7 +102,7 @@ Portanto, em imagens binárias, se na janela do elemento estruturante existir pe
 \end{figure}
 
 \subsection{Abertura}
-A abertura tende a remover pixels de foreground em regiões de ponta de foreground. A abertura pode ser definida como a composição de uma dilatação com uma erosão:
+A abertura tende a remover pixels de foreground em regiões de ponta de foreground. Assim, é indicada para a remoção de ruídos. A abertura pode ser definida como a composição de uma dilatação com uma erosão:
 
 \begin{equation}
     \gamma_B = \delta_B \circ \in_B
@@ -123,7 +123,7 @@ A abertura tende a remover pixels de foreground em regiões de ponta de foregrou
 \end{figure}
 
 \subsection{Fechamento}
-O fechamento tende a remover pixels de background em regiões de ponta de background. O fechamento pode ser definido como a composição de uma erosão com uma dilatação:
+O fechamento tende a remover pixels de background em regiões de ponta de background. Desta forma, é útil para remover pequenos pontos (ou buracos) pretos na imagem (considerando-se o foreground como branco). O fechamento pode ser definido como a composição de uma erosão com uma dilatação:
 
 \begin{equation}
     \varphi_B = \in_B \circ \delta_B
