@@ -51,12 +51,12 @@ def Hghb(region, M=8):
     return result * HMb(region)
 
 if __name__ == '__main__':
-    #for fingerprint in glob.glob("Fingerprints/*.tif"):
-        fingerprint = "Fingerprints/1_1.tif"
+    for fingerprint in glob.glob("Fingerprints/*.tif"):
         image = cv2.cvtColor(cv2.imread(fingerprint), cv2.cv.CV_BGR2GRAY)
         intermediate_image = np.zeros(image.shape)
         final_image = np.zeros(image.shape)
         for region, ki, kj in even_slices(image):
+            print ki, kj
             fft = np.fft.fft2(region)
             fft_shift = np.fft.fftshift(fft)
             hmb = np.fft.ifft2(np.fft.ifftshift(HMb(fft_shift)))
@@ -65,7 +65,7 @@ if __name__ == '__main__':
             for i in range(16):
                 for j in range(16):
                     intermediate_image[(ki) * 8 + i][(kj) * 8 + j] = abs(hmb_intensity[i][j])
-                    final_image[(ki) * 8 + i][(kj) * 8 + j] = hghb[i][j]
+                    final_image[(ki) * 8 + i][(kj) * 8 + j] = abs(255 - hghb[i][j])
         cv2.imwrite(fingerprint[:-4] + '_intermediate.jpg', intermediate_image)
         cv2.imwrite(fingerprint[:-4] + '_final.jpg', final_image)
         print fingerprint[:-4]
