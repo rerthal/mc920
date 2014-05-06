@@ -12,7 +12,7 @@ foreground_labels = map(lambda e: 1, foreground_data)
 X = np.array(background_data + foreground_data)
 y = np.array(background_labels + foreground_labels)
 
-classifier = SVC()
+classifier = SVC(C = 1000)
 classifier.fit(X, y)
 
 def is_foreground(image):
