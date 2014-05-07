@@ -1,0 +1,91 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{pgfplots, pgfplotstable}
+\usepackage{ae}
+\usepackage[brazil]{babel}
+\usepackage[vmargin=2cm,hmargin=2cm,columnsep=0.75cm]{geometry}
+\usepackage{float,nonfloat}
+\usepackage{graphicx,color}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{verbatim}
+\usepackage{booktabs}
+
+\makeatletter
+\let\@institution\empty
+\def\institution#1{\def\@institution{#1}}
+\renewcommand{\maketitle}{
+    \begin{center}
+        {\Large\bfseries\@title\par\medskip}
+        {\large
+            \begin{tabular}[t]{c}%
+                \@author
+        \end{tabular}\par\medskip}
+        {\itshape\@institution\par}
+        {\itshape\@date\par}
+\end{center}}
+\makeatother
+
+\newcommand{\img}[3]{
+    \begin{figure}[!ht]
+        \centering
+        \begin{subfigure}[ht]{0.3\textwidth}
+            \fbox{\includegraphics[width=\textwidth]{#1}}
+            \caption{Imagem original}
+        \end{subfigure}
+        \qquad
+        \begin{subfigure}[ht]{0.3\textwidth}
+            \fbox{\includegraphics[width=\textwidth]{#2}}
+            \caption{4-vizinhança}
+        \end{subfigure}
+        \qquad
+        \begin{subfigure}[ht]{0.3\textwidth}
+            \fbox{\includegraphics[width=\textwidth]{#3}}
+            \caption{8-vizinhança}
+        \end{subfigure}
+        \caption{Imagens original e aplicar o filtro com 4- e 8-vizinhança}
+    \end{figure}
+}
+\begin{document}
+% ============================================================================
+
+\title{MC920: Introdução ao Processamento de Imagem Digital\\Tarefa 13}
+\author{
+    \begin{minipage}{6cm}
+        \centering
+        Martin Ichilevici de Oliveira\\
+        RA 118077
+    \end{minipage}
+    \and
+    \begin{minipage}{6cm}
+        \centering
+        Rafael Almeida Erthal Hermano\\
+        RA 121286
+    \end{minipage}
+}
+\institution{Instituto de Computação, Universidade Estadual de Campinas}
+\date{\today}
+
+\maketitle
+
+\section{Operações Básicas}
+
+Definimos o operador $S_q$ como abaixo.
+
+\begin{equation}
+    S_q (X) = \bigcup_{n=0}^{\infty} \epsilon_{nB} / \gamma_B \circ \epsilon_{nB}
+\end{equation}
+
+Podemos usar tanto a 4-vizinhança como a 8-vizinhança.
+
+\textbf{\color{red}A operação é homotópica ou não?}
+\img{img.png}{img_4_final.jpg}{img_8_final.jpg}
+\img{teste1a.jpg}{teste1a_4_final.jpg}{teste1a_8_final.jpg}
+\img{teste1b.jpg}{teste1b_4_final.jpg}{teste1b_8_final.jpg}
+\img{teste2a.jpg}{teste2a_4_final.jpg}{teste2a_8_final.jpg}
+\img{teste2b.jpg}{teste2b_4_final.jpg}{teste2b_8_final.jpg}
+\begin{thebibliography}{99}
+    \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
+\end{thebibliography}
+\end{document}
