@@ -9,8 +9,11 @@ def f(img, n, neighborhood=8):
         kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(size,size))
     else:
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(size,size))
-    erosion = cv2.erode(img, kernel, iterations = 1)
+    new_img = cv2.copyMakeBorder(img, n, n, n, n, cv2.BORDER_CONSTANT, value=0)
+    erosion = cv2.erode(new_img, kernel, iterations = 1)
     opening = cv2.morphologyEx(erosion, cv2.MORPH_OPEN, kernel)
+    erosion = erosion[n:len(erosion)-n, n:len(erosion[0])-n]
+    opening = opening[n:len(opening)-n, n:len(opening[0])-n]
     return erosion - opening
 
 def union(img, neighborhood):
@@ -20,15 +23,16 @@ def union(img, neighborhood):
         result = result + aux
         for i in range(len(result)):
             for j in range(len(result[i])):
-                result[i][j] = min(255, result[i][j])
-    return result
+                result[i][j] = min(1, result[i][j])
+    return result * 255
 
 
 if __name__ == '__main__':
-#    for imgname in glob.glob('teste[12][ab].jpg'):
-        imgname = 'img.png'
+    for imgname in glob.glob('teste[012][ab].png'):
+        print imgname
         img = cv2.imread(imgname, 0)
+        img /= 255
         bla = union(img, 8)
-        cv2.imwrite(imgname[:-4] + '_8_final.jpg', bla)
+        cv2.imwrite(imgname[:-4] + '_8_final.png', bla)
         bla = union(img, 4)
-        cv2.imwrite(imgname[:-4] + '_4_final.jpg', bla)
+        cv2.imwrite(imgname[:-4] + '_4_final.png', bla)
