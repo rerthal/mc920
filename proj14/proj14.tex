@@ -1,0 +1,133 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{pgfplots, pgfplotstable}
+\usepackage{ae}
+\usepackage[brazil]{babel}
+\usepackage[vmargin=2cm,hmargin=2cm,columnsep=0.75cm]{geometry}
+\usepackage{float,nonfloat}
+\usepackage{graphicx,color}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{verbatim}
+
+\makeatletter
+\let\@institution\empty
+\def\institution#1{\def\@institution{#1}}
+\renewcommand{\maketitle}{
+    \begin{center}
+        {\Large\bfseries\@title\par\medskip}
+        {\large
+            \begin{tabular}[t]{c}%
+                \@author
+        \end{tabular}\par\medskip}
+        {\itshape\@institution\par}
+        {\itshape\@date\par}
+\end{center}}
+\makeatother
+
+\newcommand{\pixel}{\textit{pixel} }
+\newcommand{\pixels}{\textit{pixels} }
+\newcommand{\kernel}{\textit{kernel} }
+\newcommand{\kernels}{\textit{kernels} }
+
+\begin{document}
+% ============================================================================
+
+\title{MC920: Introdução ao Processamento de Imagem Digital\\Tarefa 14}
+\author{
+    \begin{minipage}{6cm}
+        \centering
+        Martin Ichilevici de Oliveira\\
+        RA 118077
+    \end{minipage}
+    \and
+    \begin{minipage}{6cm}
+        \centering
+        Rafael Almeida Erthal Hermano\\
+        RA 121286
+    \end{minipage}
+}
+\institution{Instituto de Computação, Universidade Estadual de Campinas}
+\date{\today}
+
+\maketitle
+
+\section{Operador morfológico de coerência direcional}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{1.jpg}
+        \caption{Imagem original}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{1_filtered_window_3.jpg}
+        \caption{Filtrada com janela igual à 3}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{1_filtered_window_5.jpg}
+        \caption{Filtrada com janela igual à 5}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{2.jpg}
+        \caption{Imagem original}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{2_filtered_window_3.jpg}
+        \caption{Filtrada com janela igual à 3}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{2_filtered_window_5.jpg}
+        \caption{Filtrada com janela igual à 5}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{3.jpg}
+        \caption{Imagem original}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{3_filtered_window_3.jpg}
+        \caption{Filtrada com janela igual à 3}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{3_filtered_window_5.jpg}
+        \caption{Filtrada com janela igual à 5}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{4.jpg}
+        \caption{Imagem original}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{4_filtered_window_3.jpg}
+        \caption{Filtrada com janela igual à 3}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[ht]{0.20\textwidth}
+        \includegraphics[width=\textwidth]{4_filtered_window_5.jpg}
+        \caption{Filtrada com janela igual à 5}
+    \end{subfigure}
+\end{figure}
+
+\begin{thebibliography}{99}
+    \bibitem{livro} GONZALEZ, Rafael C.; WOODS, Richard E.. \textbf{Digital Image Processing}. 3. ed. Upper Saddle River, NJ, EUA: Prentice-hall, 2006.
+\end{thebibliography}
+\end{document}
