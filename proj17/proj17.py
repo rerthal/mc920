@@ -33,7 +33,7 @@ def yokoi(x):
             abs(x7 - x7*x8*x1)
 
 def nc_rutovitz(src):
-    img = cv2.copyMakeBorder(src, 1, 1, 1, 1, cv2.BORDER_CONSTANT, 0).astype(int)
+    img = cv2.copyMakeBorder(src, 1, 1, 1, 1, cv2.BORDER_CONSTANT, 1).astype(int)
     ret = np.zeros(src.shape)
     for i in range(len(src)):
         for j in range(len(src[i])):
@@ -42,9 +42,9 @@ def nc_rutovitz(src):
 
 def nc_yokoi(src, connectivity=4):
     if connectivity == 4:
-        img = cv2.copyMakeBorder(src, 1, 1, 1, 1, cv2.BORDER_CONSTANT, 0).astype(int)
+        img = cv2.copyMakeBorder(src, 1, 1, 1, 1, cv2.BORDER_CONSTANT, 1).astype(int)
     elif connectivity == 8:
-        img = cv2.copyMakeBorder(1 - src, 1, 1, 1, 1, cv2.BORDER_CONSTANT, 0).astype(int)
+        img = cv2.copyMakeBorder(1 - src, 1, 1, 1, 1, cv2.BORDER_CONSTANT, 1).astype(int)
     else:
         print 'Error. Connectivity = ', connectivity
         return
