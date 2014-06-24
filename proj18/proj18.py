@@ -136,89 +136,90 @@ def orientation (img):
 
 if __name__ == '__main__':
     directory = sys.argv[1]
-    for fingerprint in os.listdir("./fingerprints/" + directory):
-        filename = "./fingerprints/" + directory + "/" + fingerprint
-        basename = './fingerprints/' + directory + '/' + fingerprint.split('.')[0]
-        if '.tif' not in fingerprint:
-            print 'skipped ' + filename + ' (not a .tif file)'
-            continue
-        print filename
-        start_timer = time.time()
-        src = cv2.imread(filename)
-        #src = src[250:350,150:250]
-        #src = src[400:500,50:150]
+    fingerprint = sys.argv[2]
+    print fingerprint
+    filename = "./fingerprints/" + directory + "/" + fingerprint
+    basename = './fingerprints/' + directory + '/' + fingerprint.split('.')[0]
+    if '.tif' not in fingerprint:
+        print 'skipped ' + filename + ' (not a .tif file)'
+        sys.exit()
+    print filename
+    start_timer = time.time()
+    src = cv2.imread(filename)
+    #src = src[250:350,150:250]
+    #src = src[400:500,50:150]
 
-        src_gray = cv2.cvtColor(src, cv2.cv.CV_BGR2GRAY)
-        src_gray_cropped = crop(src_gray, 22)
-        cv2.imwrite(basename + '.jpg', src_gray_cropped)
+    src_gray = cv2.cvtColor(src, cv2.cv.CV_BGR2GRAY)
+    src_gray_cropped = crop(src_gray, 22)
+    cv2.imwrite(basename + '.jpg', src_gray_cropped)
 
-        ## Secao 4.1
-        # img_direc contem a informacao direcional em cada ponto
-        # X contem os pixels em que a a informacao direcional calculada com janela pequena
-        #   foi diferente daquela calculada com a janela grande
-        img_direc, X = orientation(src_gray)
+    ## Secao 4.1
+    # img_direc contem a informacao direcional em cada ponto
+    # X contem os pixels em que a a informacao direcional calculada com janela pequena
+    #   foi diferente daquela calculada com a janela grande
+    img_direc, X = orientation(src_gray)
 
 
-        ## Secao 4.2
-        # water contem as linhas de watershed (segmentacao)
-        _,water = pymorph.cwatershed(src_gray, pymorph.regmin(src_gray), return_lines= True)
-        
-        # remover elementos de conexidade 3 e 4 (yokoi 8-conexo)
-        water_nc = nc_yokoi(water)
+    ## Secao 4.2
+    # water contem as linhas de watershed (segmentacao)
+    _,water = pymorph.cwatershed(src_gray, pymorph.regmin(src_gray), return_lines= True)
+    
+    # remover elementos de conexidade 3 e 4 (yokoi 8-conexo)
+    water_nc = nc_yokoi(water)
 
-        water_lines = cv2.cvtColor(np.copy(src_gray), cv2.cv.CV_GRAY2BGR)
-        water_lines[water == True] = (255,0,0)
+    water_lines = cv2.cvtColor(np.copy(src_gray), cv2.cv.CV_GRAY2BGR)
+    water_lines[water == True] = (255,0,0)
 
-        ## Secao 4.3
-        # calcula a informacao direcional das linhas de watershed
-        water_dir = direc(water, w=4)
-        water_dir = mode(water_dir, w=7)
-        water_dir = crop(water_dir, 22)
-        water[water_nc == 3] = 0
-        water[water_nc == 4] = 0
+    ## Secao 4.3
+    # calcula a informacao direcional das linhas de watershed
+    water_dir = direc(water, w=4)
+    water_dir = mode(water_dir, w=7)
+    water_dir = crop(water_dir, 22)
+    water[water_nc == 3] = 0
+    water[water_nc == 4] = 0
 
-        if show_watershed:
-            pylab.figure()
-            pylab.imshow(crop(water_lines,22))
-            pylab.savefig(basename + '_watershed.jpg', bbox_inches='tight')
+    if show_watershed:
+        pylab.figure()
+        pylab.imshow(crop(water_lines,22))
+        pylab.savefig(basename + '_watershed.jpg', bbox_inches='tight')
 
-            pylab.imshow(water_dir)
-            pylab.colorbar()
-            pylab.savefig(basename + '_water_dir.jpg', bbox_inches='tight')
+        pylab.imshow(water_dir)
+        pylab.colorbar()
+        pylab.savefig(basename + '_water_dir.jpg', bbox_inches='tight')
 
-        # marcar pixels em que a direcao no watershed eh perpendicular a imagem
-        M = np.zeros(water_dir.shape)
-        # marcadores -> 67.5 <= theta < 112.5
-        M[abs(water_dir - img_direc) >= 67.5] = 1
-        M[abs(water_dir - img_direc) > 112.5] = 0
+    # marcar pixels em que a direcao no watershed eh perpendicular a imagem
+    M = np.zeros(water_dir.shape)
+    # marcadores -> 67.5 <= theta < 112.5
+    M[abs(water_dir - img_direc) >= 67.5] = 1
+    M[abs(water_dir - img_direc) > 112.5] = 0
 
-        markers = cv2.cvtColor(np.copy(src_gray_cropped), cv2.cv.CV_GRAY2BGR)
-        markers[M*crop(water,22)==1] = (255,0,0)
+    markers = cv2.cvtColor(np.copy(src_gray_cropped), cv2.cv.CV_GRAY2BGR)
+    markers[M*crop(water,22)==1] = (255,0,0)
 
-        if show_markers:
-            f = pylab.figure()
-            pylab.imshow(markers)
-            pylab.savefig(basename + '_markers.jpg', bbox_inches='tight')
+    if show_markers:
+        f = pylab.figure()
+        pylab.imshow(markers)
+        pylab.savefig(basename + '_markers.jpg', bbox_inches='tight')
 
-        ## Secao 4.4
-        # Aplica transformada de distancia a X (secao 4.1)
-        dist_X = mahotas.distance(X)
-       
-        ## Secao 4.5
-        # aplicar abetura nos elementos de X centrados 
-        reconnected = np.copy(src_gray)
-        for i in range(len(X)):
-            for j in range(len(X[i])):
-                if M[i][j] == 1 and crop(water,22)[i][j] == True:
-                    if X[i][j] == 1:
-                        structuring_element = np.ones((1,dist_X[i][j] * 2 + 1), np.uint8)
-                    else:
-                        structuring_element = np.ones((1,5), np.uint8)
-                    size = structuring_element.size
-                    #structuring_element = pymorph.serot(structuring_element, theta=img_direc[i][j])
-                    structuring_element = pymorph.serot(structuring_element, theta=90)
-                    window = cv2.morphologyEx(src_gray, cv2.MORPH_OPEN, structuring_element, iterations=10)[i+22-size/2:i+22+size/2+1,j]
-                    reconnected[i+22-size/2:i+22+size/2+1,j+22] = window
+    ## Secao 4.4
+    # Aplica transformada de distancia a X (secao 4.1)
+    dist_X = mahotas.distance(X)
+   
+    ## Secao 4.5
+    # aplicar abetura nos elementos de X centrados 
+    reconnected = np.copy(src_gray)
+    for i in range(len(X)):
+        for j in range(len(X[i])):
+            if M[i][j] == 1 and crop(water,22)[i][j] == True:
+                if X[i][j] == 1:
+                    structuring_element = np.ones((1,dist_X[i][j] * 2 + 1), np.uint8)
+                else:
+                    structuring_element = np.ones((1,5), np.uint8)
+                size = structuring_element.size
+                #structuring_element = pymorph.serot(structuring_element, theta=img_direc[i][j])
+                structuring_element = pymorph.serot(structuring_element, theta=90)
+                window = cv2.morphologyEx(src_gray, cv2.MORPH_OPEN, structuring_element, iterations=10)[i+22-size/2:i+22+size/2+1,j]
+                reconnected[i+22-size/2:i+22+size/2+1,j+22] = window
 
-        cv2.imwrite(basename + '_reconnected.jpg', reconnected)
-        print int(time.time() - start_timer), ' s'
+    cv2.imwrite(basename + '_reconnected.jpg', reconnected)
+    print int(time.time() - start_timer), ' s'
